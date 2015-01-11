@@ -1,22 +1,26 @@
 package com.quester.experiment.dagger2experiment;
 
 import android.app.Activity;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
-import android.os.Bundle;
-import android.view.Gravity;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.quester.experiment.dagger2experiment.data.area.Circle;
+import com.quester.experiment.dagger2experiment.data.area.CircularArea;
+import com.quester.experiment.dagger2experiment.data.area.Point;
+import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
+
+import org.parceler.Parcels;
 
 
 public class MainActivity extends ActionBarActivity
@@ -135,6 +139,24 @@ public class MainActivity extends ActionBarActivity
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+            //create a Checkpoint, fill it with data, wrap it in parcel, unwrap and print onscreen:
+            Checkpoint checkpoint = new Checkpoint();
+
+            checkpoint.setId(1L);
+            checkpoint.setArea(new CircularArea(new Circle(new Point(1.0, 2.0), 3.0), 1L));
+            checkpoint.setName("Checkpoint 1");
+            checkpoint.setRoot(true);
+            checkpoint.setViewHtmlFileName("path.html");
+            checkpoint.setEventsScriptFileName("path1.js");
+
+            Parcelable wrapped  = Parcels.wrap(Checkpoint.class, checkpoint);
+
+            Checkpoint unwraped = Parcels.unwrap(wrapped);
+
+            TextView textView = (TextView)rootView.findViewById(R.id.textView);
+            textView.setText(unwraped.toString());
+
             return rootView;
         }
 
