@@ -1,13 +1,14 @@
-package com.quester.experiment.dagger2experiment;
+package com.quester.experiment.dagger2experiment.ui;
 
 import android.app.Activity;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.quester.experiment.dagger2experiment.ApplicationComponent;
+import com.quester.experiment.dagger2experiment.InjectionActivity;
+import com.quester.experiment.dagger2experiment.R;
 import com.quester.experiment.dagger2experiment.data.area.Circle;
 import com.quester.experiment.dagger2experiment.data.area.CircularArea;
 import com.quester.experiment.dagger2experiment.data.area.Point;
@@ -22,9 +26,16 @@ import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
 
 import org.parceler.Parcels;
 
+import javax.inject.Inject;
 
-public class MainActivity extends ActionBarActivity
+
+public class MainActivity extends InjectionActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+
+    private static final String TAG = "MainActivity";
+
+    @Inject
+    protected LocationManager locationManager;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -37,8 +48,17 @@ public class MainActivity extends ActionBarActivity
     private CharSequence mTitle;
 
     @Override
+    protected void inject(ApplicationComponent applicationComponent) {
+        applicationComponent.injectActivity(this);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.d(TAG, "injected dependencies");
+        Log.d(TAG, String.valueOf(locationManager != null));
+
         setContentView(R.layout.activity_main);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -152,10 +172,10 @@ public class MainActivity extends ActionBarActivity
 
             Parcelable wrapped  = Parcels.wrap(Checkpoint.class, checkpoint);
 
-            Checkpoint unwraped = Parcels.unwrap(wrapped);
+            Checkpoint unwrapped = Parcels.unwrap(wrapped);
 
             TextView textView = (TextView)rootView.findViewById(R.id.textView);
-            textView.setText(unwraped.toString());
+            textView.setText(unwrapped.toString());
 
             return rootView;
         }

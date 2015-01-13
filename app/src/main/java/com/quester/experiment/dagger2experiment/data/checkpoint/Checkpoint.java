@@ -13,7 +13,7 @@ public class Checkpoint {
 
     private long id;
     private String name;
-    private boolean isRoot;
+    private boolean root;
     private CircularArea area;
     private String viewHtmlFileName;
     private String eventsScriptFileName;
@@ -25,7 +25,7 @@ public class Checkpoint {
     public Checkpoint(long id, String name, boolean root, CircularArea area, String viewHtmlFileName, String eventsScriptFileName) {
         this.id = id;
         this.name = name;
-        this.isRoot = root;
+        this.root = root;
         this.area = area;
         this.viewHtmlFileName = viewHtmlFileName;
         this.eventsScriptFileName = eventsScriptFileName;
@@ -48,11 +48,11 @@ public class Checkpoint {
     }
 
     public boolean isRoot() {
-        return isRoot;
+        return root;
     }
 
-    public void setRoot(boolean isRoot) {
-        this.isRoot = isRoot;
+    public void setRoot(boolean root) {
+        this.root = root;
     }
 
     public CircularArea getArea() {
@@ -107,7 +107,7 @@ public class Checkpoint {
         return "Checkpoint{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", isRoot=" + isRoot +
+                ", root=" + root +
                 ", area=" + area +
                 ", viewHtmlFileName='" + viewHtmlFileName + '\'' +
                 ", eventsScriptFileName='" + eventsScriptFileName + '\'' +
