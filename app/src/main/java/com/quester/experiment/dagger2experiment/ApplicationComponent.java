@@ -8,6 +8,9 @@ import dagger.Component;
 
 /**
  * Created by Josip on 13/01/2015!
+ * Application level injection component.
+ * Contained in current @see InjectionApplication instance.
+ * Has a separate injectActivity method defined for every activity.
  */
 @Singleton
 @Component(modules = {
@@ -16,6 +19,10 @@ import dagger.Component;
 public interface ApplicationComponent {
 
     void injectApplication(InjectionApplication application);
+
     void injectActivity(MainActivity activity);
 
+    /*
+    other injectActivity methods go here
+     */
 }

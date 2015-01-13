@@ -34,6 +34,9 @@ public class MainActivity extends InjectionActivity
 
     private static final String TAG = "MainActivity";
 
+    /**
+     * LocationManager is injected for demo purposes.
+     */
     @Inject
     protected LocationManager locationManager;
 
@@ -47,11 +50,21 @@ public class MainActivity extends InjectionActivity
      */
     private CharSequence mTitle;
 
+    /**
+     * "Default" implementation of @see InjectionActivity#inject
+     *
+     * @param applicationComponent
+     */
     @Override
     protected void inject(ApplicationComponent applicationComponent) {
         applicationComponent.injectActivity(this);
     }
 
+    /**
+     * Calling super.onCreate will trigger dependency injection that will in turn use @see MainActivity#inject method.
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -170,11 +183,11 @@ public class MainActivity extends InjectionActivity
             checkpoint.setViewHtmlFileName("path.html");
             checkpoint.setEventsScriptFileName("path1.js");
 
-            Parcelable wrapped  = Parcels.wrap(Checkpoint.class, checkpoint);
+            Parcelable wrapped = Parcels.wrap(Checkpoint.class, checkpoint);
 
             Checkpoint unwrapped = Parcels.unwrap(wrapped);
 
-            TextView textView = (TextView)rootView.findViewById(R.id.textView);
+            TextView textView = (TextView) rootView.findViewById(R.id.textView);
             textView.setText(unwrapped.toString());
 
             return rootView;
