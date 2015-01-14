@@ -70,9 +70,16 @@ public class QuestGraph {
         map.get(start).remove(end);
     }
 
+    /**
+     * @param checkpoint
+     * @return whether quest graph contains checkpoint
+     */
+    public boolean containsCheckpoint(Checkpoint checkpoint) {
+        return map.containsKey(checkpoint);
+    }
 
     private void assertCheckpointExists(final Checkpoint checkpoint) throws IllegalArgumentException {
-        if (!map.containsKey(checkpoint)) {
+        if (!containsCheckpoint(checkpoint)) {
             throw new IllegalArgumentException("Checkpoint does not exist in quest graph");
         }
     }
