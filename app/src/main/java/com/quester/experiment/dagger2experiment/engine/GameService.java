@@ -3,7 +3,6 @@ package com.quester.experiment.dagger2experiment.engine;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.os.Parcelable;
 
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
 
@@ -23,7 +22,7 @@ public abstract class GameService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        startGame(getQuestFromIntent(intent));
+        startGame(extractQuestFromIntent(intent));
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -39,14 +38,12 @@ public abstract class GameService extends Service {
 
     protected abstract void startGame(Quest quest);
 
-    private Quest getQuestFromIntent(Intent intent) {
-        Parcelable questParcelable = intent.getParcelableExtra(QUEST_EXTRA_ID);
-
+    private Quest extractQuestFromIntent(Intent intent) {
         try {
-            return (Quest) Parcels.unwrap(questParcelable);
+            return (Quest) Parcels.unwrap(intent.getParcelableExtra(QUEST_EXTRA_ID));
         } catch (Exception exception) {
             //TODO: granulate exception handling
-            throw new IllegalArgumentException("Provide Quest as parcelable extra in the intent");
+            throw new IllegalArgumentException("Missing Quest as parcelable extra in the intent");
         }
     }
 }

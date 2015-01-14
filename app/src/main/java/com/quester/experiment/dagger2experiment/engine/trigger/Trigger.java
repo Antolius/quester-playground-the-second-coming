@@ -7,13 +7,9 @@ import java.util.Collection;
 /**
  * Created by Josip on 14/01/2015!
  */
-public abstract class Trigger {
+public interface Trigger {
 
-    protected CheckpointReachedCallback callback;
-
-    public void onCheckpointReached(CheckpointReachedCallback callback) {
-        this.callback = callback;
-    }
+    public void onCheckpointReached(CheckpointReachedCallback callback);
 
     public abstract void start();
 

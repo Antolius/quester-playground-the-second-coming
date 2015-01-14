@@ -41,11 +41,11 @@ public class GameEngineService extends GameService implements CheckpointReachedC
 
     @Override
     protected void startGame(Quest quest) {
-        initiateTriggersstartTriggers();
+        startTriggers();
         registerReachableCheckpoints(QuestGraphUtils.getRootCheckpoints(quest.getQuestGraph()));
     }
 
-    private void initiateTriggersstartTriggers() {
+    private void startTriggers() {
         for (Trigger trigger : checkpointReachedTriggers) {
             trigger.start();
         }
