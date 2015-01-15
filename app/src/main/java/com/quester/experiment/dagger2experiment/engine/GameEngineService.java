@@ -18,6 +18,8 @@ import java.util.List;
  */
 public class GameEngineService extends GameService implements CheckpointReachedCallback {
 
+    public static final String TAG = "GameEngineService";
+
     private List<Processor> checkpointVisitabillityProcessors;
     private List<Trigger> checkpointReachedTriggers;
     private GameStateProvider gameStateProvider;
@@ -41,6 +43,7 @@ public class GameEngineService extends GameService implements CheckpointReachedC
 
     @Override
     protected void startGame(Quest quest) {
+        gameStateProvider.initiate(quest);
         startTriggers();
         registerReachableCheckpoints(QuestGraphUtils.getRootCheckpoints(quest.getQuestGraph()));
     }

@@ -13,6 +13,8 @@ import org.parceler.Parcels;
  */
 public abstract class GameService extends Service {
 
+    public static final String TAG = "GameService";
+
     public static final String QUEST_EXTRA_ID = "QUEST_EXTRA_ID";
 
     @Override

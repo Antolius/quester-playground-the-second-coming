@@ -64,7 +64,7 @@ public class GeofenceApiUtils {
                 context,
                 0,
                 new Intent(context, LocationTrigger.class)
-                        .putParcelableArrayListExtra(IntentIds.CHECKPOINTS_ARRAY_EXTRA_ID, wrapCheckpoints(checkpoints)),
+                        .putParcelableArrayListExtra(Constants.CHECKPOINTS_ARRAY_EXTRA_ID, wrapCheckpoints(checkpoints)),
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 

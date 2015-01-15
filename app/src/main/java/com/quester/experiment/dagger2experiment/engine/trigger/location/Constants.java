@@ -3,7 +3,7 @@ package com.quester.experiment.dagger2experiment.engine.trigger.location;
 /**
  * Created by Josip on 14/01/2015!
  */
-public class IntentIds {
+public class Constants {
 
     public static final String CHECKPOINT_EXTRA_ID = "CHECKPOINT_EXTRA_ID";
 

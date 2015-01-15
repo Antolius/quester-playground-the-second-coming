@@ -23,15 +23,15 @@ public class MockedQuestUtils {
         return new Quest(id, name, getMockedDiamondQuestGraph(), new QuestMetaData());
     }
 
-    public static Quest getMockedPiramidQuest(long id, String name, int nuberOfRoots) {
-        return new Quest(id, name, getMockedPyramidQuestGrapn(nuberOfRoots), new QuestMetaData());
+    public static Quest getMockedPyramidQuest(long id, String name, int nuberOfRoots) {
+        return new Quest(id, name, getMockedPyramidQuestGraph(nuberOfRoots), new QuestMetaData());
     }
 
-    public static QuestGraph getMockedPyramidQuestGrapn(int nuberOfRoots) {
-        ArrayList<Checkpoint> checkpoints = getMockedCheckpoints(nuberOfRoots + 1, nuberOfRoots);
+    public static QuestGraph getMockedPyramidQuestGraph(int numberOfRoots) {
+        ArrayList<Checkpoint> checkpoints = getMockedCheckpoints(numberOfRoots + 1, numberOfRoots);
         QuestGraph questGraph = new QuestGraph(checkpoints);
-        for (int i = 0; i < nuberOfRoots; i++) {
-            questGraph.addEdge(checkpoints.get(i), checkpoints.get(nuberOfRoots));
+        for (int i = 0; i < numberOfRoots; i++) {
+            questGraph.addEdge(checkpoints.get(i), checkpoints.get(numberOfRoots));
         }
         return questGraph;
     }

@@ -17,7 +17,9 @@ import javax.inject.Inject;
 /**
  * Created by Josip on 14/01/2015!
  */
-public class LocationTracker implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class GeofencesTracker implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
+    public static final String TAG = "GeofencesTracker";
 
     private GoogleApiClient apiClient;
     private Context context;
@@ -25,7 +27,7 @@ public class LocationTracker implements GoogleApiClient.ConnectionCallbacks, Goo
     private Collection<Checkpoint> trackingCheckpoints = new ArrayList<>(0);
 
     @Inject
-    public LocationTracker(@EngineScope Context context) {
+    public GeofencesTracker(@EngineScope Context context) {
         this.context = context;
 
         apiClient = new GoogleApiClient.Builder(context)

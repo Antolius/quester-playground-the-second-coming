@@ -32,14 +32,14 @@ public class GeofenceIntentService extends IntentService {
         List<Geofence> fences = event.getTriggeringGeofences();
         Location location = event.getTriggeringLocation();
 
-        ArrayList<Parcelable> wrappedCheckpoints = intent.getParcelableArrayListExtra(IntentIds.CHECKPOINTS_ARRAY_EXTRA_ID);
+        ArrayList<Parcelable> wrappedCheckpoints = intent.getParcelableArrayListExtra(Constants.CHECKPOINTS_ARRAY_EXTRA_ID);
 
         //TODO: handle multiple triggering geofences at once
         Parcelable wrappedCheckpoint = getTriggeringCheckpoint(wrappedCheckpoints, fences.get(0));
 
         sendBroadcast(new Intent("Entered checkpoint area")
-                        .putExtra(IntentIds.CHECKPOINT_EXTRA_ID, wrappedCheckpoint)
-                        .putExtra(IntentIds.LOCATION_EXTRA_ID, location)
+                        .putExtra(Constants.CHECKPOINT_EXTRA_ID, wrappedCheckpoint)
+                        .putExtra(Constants.LOCATION_EXTRA_ID, location)
         );
     }
 

@@ -23,13 +23,15 @@ import javax.inject.Inject;
  */
 public class LocationTrigger extends BroadcastReceiver implements Trigger {
 
+    public static final String TAG = "LocationTrigger";
+
     private CheckpointReachedCallback callback;
 
     private Context context;
-    private LocationTracker locationTracker;
+    private GeofencesTracker locationTracker;
 
     @Inject
-    public LocationTrigger(@EngineScope Context context, @EngineScope LocationTracker locationTracker) {
+    public LocationTrigger(@EngineScope Context context, @EngineScope GeofencesTracker locationTracker) {
         this.context = context;
         this.locationTracker = locationTracker;
     }
@@ -41,7 +43,7 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
 
     @Override
     public void start() {
-        context.registerReceiver(this, new IntentFilter(IntentIds.GEOFENCE_ENTERED_ACTION));
+        context.registerReceiver(this, new IntentFilter(Constants.GEOFENCE_ENTERED_ACTION));
         locationTracker.start();
     }
 
@@ -67,7 +69,7 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
 
     private Checkpoint extractCheckpointFromIntent(Intent intent) {
         try {
-            return Parcels.unwrap(intent.getParcelableExtra(IntentIds.CHECKPOINT_EXTRA_ID));
+            return Parcels.unwrap(intent.getParcelableExtra(Constants.CHECKPOINT_EXTRA_ID));
         } catch (Exception exception) {
             //TODO: granulate exception handling
             throw new IllegalArgumentException("Missing Checkpoint as parcelable extra in the intent");
@@ -75,7 +77,7 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
     }
 
     private Location extractLocationFromIntent(Intent intent) {
-        Location location = intent.getParcelableExtra(IntentIds.LOCATION_EXTRA_ID);
+        Location location = intent.getParcelableExtra(Constants.LOCATION_EXTRA_ID);
 
         if (location == null) {
             throw new IllegalArgumentException("Missing Location as parcelable extra in the intent");
