@@ -28,12 +28,12 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
     private CheckpointReachedCallback callback;
 
     private Context context;
-    private GeofencesTracker locationTracker;
+    private GeofencesTracker geofencesTracker;
 
     @Inject
-    public LocationTrigger(@EngineScope Context context, @EngineScope GeofencesTracker locationTracker) {
+    public LocationTrigger(@EngineScope Context context, GeofencesTracker geofencesTracker) {
         this.context = context;
-        this.locationTracker = locationTracker;
+        this.geofencesTracker = geofencesTracker;
     }
 
     @Override
@@ -44,17 +44,17 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
     @Override
     public void start() {
         context.registerReceiver(this, new IntentFilter(Constants.GEOFENCE_ENTERED_ACTION));
-        locationTracker.start();
+        geofencesTracker.start();
     }
 
     @Override
     public void stop() {
-        locationTracker.stop();
+        geofencesTracker.stop();
     }
 
     @Override
     public void registerReachableCheckpoints(Collection<Checkpoint> reachableCheckpoints) {
-        locationTracker.trackCheckpoints(reachableCheckpoints);
+        geofencesTracker.trackCheckpoints(reachableCheckpoints);
     }
 
     @Override

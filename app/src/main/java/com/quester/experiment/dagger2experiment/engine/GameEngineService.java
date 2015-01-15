@@ -12,6 +12,8 @@ import com.quester.experiment.dagger2experiment.engine.trigger.Trigger;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
 
 /**
  * Created by Josip on 14/01/2015!
@@ -20,9 +22,25 @@ public class GameEngineService extends GameService implements CheckpointReachedC
 
     public static final String TAG = "GameEngineService";
 
-    private List<Processor> checkpointVisitabillityProcessors;
-    private List<Trigger> checkpointReachedTriggers;
-    private GameStateProvider gameStateProvider;
+    @Inject
+    protected List<Processor> checkpointVisitabillityProcessors;
+
+    @Inject
+    protected List<Trigger> checkpointReachedTriggers;
+
+    @Inject
+    protected GameStateProvider gameStateProvider;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        EngineComponent engineComponent = Dagger_EngineComponent.builder()
+                .engineModule(new EngineModule(this))
+                .build();
+
+        engineComponent.injectGameEngineService(this);
+    }
 
     @Override
     public void reachCheckpoint(Checkpoint reachedCheckpoint) {
