@@ -1,6 +1,7 @@
 package com.quester.experiment.dagger2experiment.engine.state;
 
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
+import com.quester.experiment.dagger2experiment.util.Logger;
 
 /**
  * Created by Josip on 14/01/2015!
@@ -11,11 +12,18 @@ public class GameStateProvider {
 
     private GameState gameState;
 
-    public void initiate(Quest quest) {
-        gameState = new GameState();
+    private String questName;
+    private long questId;
 
+    public void initiate(Quest quest) {
+        Logger.v(TAG, "initiated with quest %s", quest.toString());
+
+        gameState = new GameState();
         gameState.setPersistentGameObject(new PersistentGameObject());
         gameState.setQuestState(new QuestState(quest.getQuestGraph()));
+
+        questName = quest.getName();
+        questId = quest.getId();
     }
 
     public GameState getGameState() {
@@ -23,9 +31,17 @@ public class GameStateProvider {
     }
 
     public boolean saveGameState() {
+        Logger.v(TAG, "saved game state for quest id=%d, visited checkpoints=%s", questId, gameState.getQuestState().getVisitedCheckpoints());
         //TODO: implement
 
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "GameStateProvider{" +
+                "questId=" + questId +
+                ", questName='" + questName + '\'' +
+                '}';
+    }
 }

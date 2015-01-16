@@ -9,7 +9,7 @@ import java.util.Collection;
  */
 public interface Trigger {
 
-    public void onCheckpointReached(CheckpointReachedCallback callback);
+    public void setCheckpointReachedListener(CheckpointReachedListener callback);
 
     public abstract void start();
 

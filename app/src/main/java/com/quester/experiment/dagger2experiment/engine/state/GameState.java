@@ -23,4 +23,5 @@ public class GameState {
     void setPersistentGameObject(PersistentGameObject persistentGameObject) {
         this.persistentGameObject = persistentGameObject;
     }
+
 }

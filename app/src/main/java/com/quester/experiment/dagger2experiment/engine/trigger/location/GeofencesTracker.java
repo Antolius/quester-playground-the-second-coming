@@ -8,6 +8,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
 import com.quester.experiment.dagger2experiment.engine.EngineScope;
+import com.quester.experiment.dagger2experiment.util.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,24 +36,31 @@ public class GeofencesTracker implements GoogleApiClient.ConnectionCallbacks, Go
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
+
+        Logger.v(TAG, "build new apiClient=%s", apiClient.toString());
     }
 
     public void trackCheckpoints(Collection<Checkpoint> newTrackingCheckpoints) {
         if (apiClient.isConnected()) {
             switchToTrackingNewCheckpoints(newTrackingCheckpoints);
         }
-
         trackingCheckpoints = newTrackingCheckpoints;
+
+        Logger.d(TAG, "registered geofences for checkpoints=%s", trackingCheckpoints);
     }
 
     public void start() {
         if (!apiClient.isConnected()) {
+            Logger.v(TAG, "connecting GoogleApiClient...");
+
             apiClient.connect();
         }
     }
 
     public void stop() {
         if (apiClient.isConnected()) {
+            Logger.v(TAG, "removing geofences and disconnecting GoogleApiClient...");
+
             GeofenceApiUtils.removeGeofencesForCheckpoints(apiClient, trackingCheckpoints);
             apiClient.disconnect();
         }
@@ -60,17 +68,19 @@ public class GeofencesTracker implements GoogleApiClient.ConnectionCallbacks, Go
 
     @Override
     public void onConnected(Bundle bundle) {
+        Logger.v(TAG, "GoogleApiClient connected, adding geofences");
+
         GeofenceApiUtils.addGeofencesForCheckpoints(context, apiClient, trackingCheckpoints);
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        //TODO: implement
+        Logger.w(TAG, "GoogleApiClients connection suspended");
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        //TODO: implement
+        Logger.e(TAG, "GoogleApiClients connection failed with connectionResult=%s", connectionResult.toString());
     }
 
     private void switchToTrackingNewCheckpoints(Collection<Checkpoint> newCheckpoints) {

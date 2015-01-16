@@ -9,8 +9,9 @@ import android.location.Location;
 import com.quester.experiment.dagger2experiment.data.area.Point;
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
 import com.quester.experiment.dagger2experiment.engine.EngineScope;
-import com.quester.experiment.dagger2experiment.engine.trigger.CheckpointReachedCallback;
+import com.quester.experiment.dagger2experiment.engine.trigger.CheckpointReachedListener;
 import com.quester.experiment.dagger2experiment.engine.trigger.Trigger;
+import com.quester.experiment.dagger2experiment.util.Logger;
 
 import org.parceler.Parcels;
 
@@ -25,7 +26,7 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
 
     public static final String TAG = "LocationTrigger";
 
-    private CheckpointReachedCallback callback;
+    private CheckpointReachedListener listener;
 
     private Context context;
     private GeofencesTracker geofencesTracker;
@@ -37,8 +38,10 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
     }
 
     @Override
-    public void onCheckpointReached(CheckpointReachedCallback callback) {
-        this.callback = callback;
+    public void setCheckpointReachedListener(CheckpointReachedListener listener) {
+        Logger.v(TAG, "setting checkpointReachedListener");
+
+        this.listener = listener;
     }
 
     @Override
@@ -59,11 +62,15 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Logger.d(TAG, "onReceive is called with intent %s", intent.toString());
+
         Checkpoint triggeringCheckpoint = extractCheckpointFromIntent(intent);
         Location location = extractLocationFromIntent(intent);
 
+        Logger.v(TAG, "triggeringCheckpoint=%s, location=%s", triggeringCheckpoint, location);
+
         if (triggeringCheckpoint.getArea().isInside(new Point(location))) {
-            callback.reachCheckpoint(triggeringCheckpoint);
+            listener.onCheckpointReached(triggeringCheckpoint);
         }
     }
 
@@ -72,6 +79,7 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
             return Parcels.unwrap(intent.getParcelableExtra(Constants.CHECKPOINT_EXTRA_ID));
         } catch (Exception exception) {
             //TODO: granulate exception handling
+            Logger.e(TAG, "exception extracting checkpoint from intent %s", exception.getMessage());
             throw new IllegalArgumentException("Missing Checkpoint as parcelable extra in the intent");
         }
     }
@@ -80,6 +88,7 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
         Location location = intent.getParcelableExtra(Constants.LOCATION_EXTRA_ID);
 
         if (location == null) {
+            Logger.e(TAG, "no location found in intent");
             throw new IllegalArgumentException("Missing Location as parcelable extra in the intent");
         }
 

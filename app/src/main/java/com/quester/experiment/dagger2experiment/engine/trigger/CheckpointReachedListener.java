@@ -5,8 +5,8 @@ import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
 /**
  * Created by Josip on 14/01/2015!
  */
-public interface CheckpointReachedCallback {
+public interface CheckpointReachedListener {
 
-    public void reachCheckpoint(Checkpoint reachedCheckpoint);
+    public void onCheckpointReached(Checkpoint reachedCheckpoint);
 
 }

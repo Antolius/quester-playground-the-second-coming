@@ -2,17 +2,21 @@ package com.quester.experiment.dagger2experiment.data.quest;
 
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
 
+import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
  * Created by Josip on 11/01/2015!
  */
+@Parcel(Parcel.Serialization.METHOD)
 public class QuestGraph {
-    private final Map<Checkpoint, Set<Checkpoint>> map;
+
+    private final HashMap<Checkpoint, HashSet<Checkpoint>> questGraphMap;
 
     /**
      * The only way to make a new Quest Graph is to give it all the checkpoints in advance.
@@ -25,17 +29,37 @@ public class QuestGraph {
             throw new IllegalArgumentException("Collection of checkpoints must not in itself be or contain null.");
         }
 
-        map = new HashMap<Checkpoint, Set<Checkpoint>>(checkpoints.size());
+        questGraphMap = new HashMap<Checkpoint, HashSet<Checkpoint>>(checkpoints.size());
         for (Checkpoint checkpoint : checkpoints) {
-            map.put(checkpoint, new HashSet<Checkpoint>());
+            questGraphMap.put(checkpoint, new HashSet<Checkpoint>());
         }
+    }
+
+    /**
+     * This constructor is not to be used for purposes other than instantiating
+     * QuestGraph object from parcel.
+     *
+     * @param questGraphMap
+     */
+    @ParcelConstructor
+    public QuestGraph(HashMap<Checkpoint, HashSet<Checkpoint>> questGraphMap) {
+        this.questGraphMap = questGraphMap;
+    }
+
+    /**
+     * This getter is not to be used for purposes other that creating a parcel
+     *
+     * @return
+     */
+    public HashMap<Checkpoint, HashSet<Checkpoint>> getQuestGraphMap() {
+        return questGraphMap;
     }
 
     /**
      * @return set of all Checkpoints in Quest Graph
      */
     public Set<Checkpoint> getAllCheckpoints() {
-        return map.keySet();
+        return questGraphMap.keySet();
     }
 
     /**
@@ -45,7 +69,7 @@ public class QuestGraph {
     public Set<Checkpoint> getChildren(final Checkpoint parent) throws IllegalStateException {
         assertCheckpointExists(parent);
 
-        return map.get(parent);
+        return questGraphMap.get(parent);
     }
 
     /**
@@ -56,7 +80,7 @@ public class QuestGraph {
         assertCheckpointExists(start);
         assertCheckpointExists(end);
 
-        map.get(start).add(end);
+        questGraphMap.get(start).add(end);
     }
 
     /**
@@ -67,7 +91,7 @@ public class QuestGraph {
         assertCheckpointExists(start);
         assertCheckpointExists(end);
 
-        map.get(start).remove(end);
+        questGraphMap.get(start).remove(end);
     }
 
     /**
@@ -75,7 +99,7 @@ public class QuestGraph {
      * @return whether quest graph contains checkpoint
      */
     public boolean containsCheckpoint(Checkpoint checkpoint) {
-        return map.containsKey(checkpoint);
+        return questGraphMap.containsKey(checkpoint);
     }
 
     private void assertCheckpointExists(final Checkpoint checkpoint) throws IllegalArgumentException {
@@ -87,7 +111,7 @@ public class QuestGraph {
     @Override
     public String toString() {
         return "QuestGraph{" +
-                "map=" + map +
+                "questGraphMap=" + questGraphMap +
                 '}';
     }
 
@@ -102,7 +126,7 @@ public class QuestGraph {
 
         QuestGraph that = (QuestGraph) o;
 
-        if (map != null ? !map.equals(that.map) : that.map != null) {
+        if (questGraphMap != null ? !questGraphMap.equals(that.questGraphMap) : that.questGraphMap != null) {
             return false;
         }
 
@@ -111,6 +135,6 @@ public class QuestGraph {
 
     @Override
     public int hashCode() {
-        return map != null ? map.hashCode() : 0;
+        return questGraphMap != null ? questGraphMap.hashCode() : 0;
     }
 }

@@ -19,10 +19,29 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Medium Text"
         android:id="@+id/textView"
-        android:layout_alignParentBottom="true"
         android:layout_toRightOf="@+id/section_label"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/section_label"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="stop game engine service"
+        android:id="@+id/stop_button"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/section_label"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="start game engine service"
+        android:id="@+id/start_button"
+        android:layout_above="@+id/stop_button"
+        android:layout_toRightOf="@+id/section_label"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
 
 </RelativeLayout>

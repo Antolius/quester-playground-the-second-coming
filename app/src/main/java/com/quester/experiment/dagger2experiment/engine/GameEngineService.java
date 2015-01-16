@@ -6,8 +6,9 @@ import com.quester.experiment.dagger2experiment.data.quest.QuestGraphUtils;
 import com.quester.experiment.dagger2experiment.engine.processor.Processor;
 import com.quester.experiment.dagger2experiment.engine.state.GameStateProvider;
 import com.quester.experiment.dagger2experiment.engine.state.QuestState;
-import com.quester.experiment.dagger2experiment.engine.trigger.CheckpointReachedCallback;
+import com.quester.experiment.dagger2experiment.engine.trigger.CheckpointReachedListener;
 import com.quester.experiment.dagger2experiment.engine.trigger.Trigger;
+import com.quester.experiment.dagger2experiment.util.Logger;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,9 +19,11 @@ import javax.inject.Inject;
 /**
  * Created by Josip on 14/01/2015!
  */
-public class GameEngineService extends GameService implements CheckpointReachedCallback {
+public class GameEngineService extends GameService implements CheckpointReachedListener {
 
     public static final String TAG = "GameEngineService";
+
+    boolean isGameInProgress = false;
 
     @Inject
     protected List<Processor> checkpointVisitabillityProcessors;
@@ -38,12 +41,23 @@ public class GameEngineService extends GameService implements CheckpointReachedC
         EngineComponent engineComponent = Dagger_EngineComponent.builder()
                 .engineModule(new EngineModule(this))
                 .build();
-
         engineComponent.injectGameEngineService(this);
+
+        for (Trigger trigger : checkpointReachedTriggers) {
+            trigger.setCheckpointReachedListener(this);
+        }
+
+        Logger.v(TAG, "Injected dependencies: %s, %s, %s",
+                checkpointVisitabillityProcessors.toString(),
+                checkpointReachedTriggers.toString(),
+                gameStateProvider.toString()
+        );
     }
 
     @Override
-    public void reachCheckpoint(Checkpoint reachedCheckpoint) {
+    public void onCheckpointReached(Checkpoint reachedCheckpoint) {
+        Logger.d(TAG, "onCheckpointReached called with %s" + reachedCheckpoint.toString());
+
         for (Processor processor : checkpointVisitabillityProcessors) {
             if (!processor.isCheckpointVisitable(reachedCheckpoint)) {
                 return;
@@ -54,22 +68,31 @@ public class GameEngineService extends GameService implements CheckpointReachedC
 
     @Override
     protected void stopGame() {
+        Logger.v(TAG, "stopping the current game");
+
         for (Trigger trigger : checkpointReachedTriggers) {
             trigger.stop();
         }
+        gameStateProvider.saveGameState();
+
+        isGameInProgress = false;
     }
 
     @Override
     protected void startGame(Quest quest) {
-        gameStateProvider.initiate(quest);
-        startTriggers();
-        registerReachableCheckpoints(QuestGraphUtils.getRootCheckpoints(quest.getQuestGraph()));
-    }
+        Logger.v(TAG, "game starting with quest %s" + quest.toString());
 
-    private void startTriggers() {
+        if (isGameInProgress) {
+            stopGame();
+        }
+
+        gameStateProvider.initiate(quest);
         for (Trigger trigger : checkpointReachedTriggers) {
             trigger.start();
         }
+        registerReachableCheckpoints(QuestGraphUtils.getRootCheckpoints(quest.getQuestGraph()));
+
+        isGameInProgress = true;
     }
 
     private void registerReachableCheckpoints(Collection<Checkpoint> reachableCheckpoints) {
@@ -78,11 +101,14 @@ public class GameEngineService extends GameService implements CheckpointReachedC
         }
     }
 
-    private void visitCheckpoint(Checkpoint reachedCheckpoint) {
+    private void visitCheckpoint(Checkpoint visitedCheckpoint) {
+        Logger.d(TAG, "visited checkpoint %s" + visitedCheckpoint.toString());
+        //TODO: send notification!
+
         QuestState currentQuestState = gameStateProvider.getGameState().getQuestState();
 
-        currentQuestState.setCheckpointAsVisited(reachedCheckpoint);
-        registerReachableCheckpoints(currentQuestState.getQuestGraph().getChildren(reachedCheckpoint));
+        currentQuestState.setCheckpointAsVisited(visitedCheckpoint);
+        registerReachableCheckpoints(currentQuestState.getQuestGraph().getChildren(visitedCheckpoint));
 
         gameStateProvider.saveGameState();
     }

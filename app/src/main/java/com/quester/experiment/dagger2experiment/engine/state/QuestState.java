@@ -33,4 +33,7 @@ public class QuestState {
         return visitedCheckpoints.peekLast();
     }
 
+    LinkedList<Checkpoint> getVisitedCheckpoints() {
+        return visitedCheckpoints;
+    }
 }

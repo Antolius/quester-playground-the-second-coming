@@ -1,8 +1,12 @@
 package com.quester.experiment.dagger2experiment.data.quest;
 
+import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
+
 /**
  * Created by Josip on 11/01/2015!
  */
+@Parcel(Parcel.Serialization.METHOD)
 public class Quest {
 
     private long id;
@@ -10,6 +14,7 @@ public class Quest {
     private QuestGraph questGraph;
     private QuestMetaData questMetaData;
 
+    @ParcelConstructor
     public Quest(long id, String name, QuestGraph questGraph, QuestMetaData questMetaData) {
         this.id = id;
         this.name = name;
