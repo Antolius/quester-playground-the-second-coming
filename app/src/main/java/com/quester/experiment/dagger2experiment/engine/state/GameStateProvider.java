@@ -16,7 +16,7 @@ public class GameStateProvider {
     private long questId;
 
     public void initiate(Quest quest) {
-        Logger.v(TAG, "initiated with quest %s", quest.toString());
+        Logger.v(TAG, "initiated with quest %s, id=%d", quest.getName(), quest.getId());
 
         gameState = new GameState();
         gameState.setPersistentGameObject(new PersistentGameObject());
@@ -31,17 +31,9 @@ public class GameStateProvider {
     }
 
     public boolean saveGameState() {
-        Logger.v(TAG, "saved game state for quest id=%d, visited checkpoints=%s", questId, gameState.getQuestState().getVisitedCheckpoints());
+        Logger.v(TAG, "saved game state for quest id=%d", questId);
         //TODO: implement
 
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return "GameStateProvider{" +
-                "questId=" + questId +
-                ", questName='" + questName + '\'' +
-                '}';
     }
 }

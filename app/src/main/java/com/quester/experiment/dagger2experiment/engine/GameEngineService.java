@@ -36,6 +36,8 @@ public class GameEngineService extends GameService implements CheckpointReachedL
 
     @Override
     public void onCreate() {
+        Logger.v(TAG, "onCreate is called, initiating dependency injection...");
+
         super.onCreate();
 
         EngineComponent engineComponent = Dagger_EngineComponent.builder()
@@ -47,11 +49,7 @@ public class GameEngineService extends GameService implements CheckpointReachedL
             trigger.setCheckpointReachedListener(this);
         }
 
-        Logger.v(TAG, "Injected dependencies: %s, %s, %s",
-                checkpointVisitabillityProcessors.toString(),
-                checkpointReachedTriggers.toString(),
-                gameStateProvider.toString()
-        );
+        Logger.v(TAG, "Injected dependencies");
     }
 
     @Override
@@ -80,7 +78,7 @@ public class GameEngineService extends GameService implements CheckpointReachedL
 
     @Override
     protected void startGame(Quest quest) {
-        Logger.v(TAG, "game starting with quest %s" + quest.toString());
+        Logger.v(TAG, "game starting with quest %s, id=%d", quest.getName(), quest.getId());
 
         if (isGameInProgress) {
             stopGame();

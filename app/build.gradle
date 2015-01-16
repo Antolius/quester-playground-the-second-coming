@@ -50,4 +50,7 @@ dependencies {
     compile 'com.google.dagger:dagger:2.0-SNAPSHOT'
     apt 'com.google.dagger:dagger-compiler:2.0-SNAPSHOT'
     provided 'org.glassfish:javax.annotation:10.0-b28'
+
+    //http://jakewharton.github.io/butterknife/
+    compile 'com.jakewharton:butterknife:6.0.0'
 }

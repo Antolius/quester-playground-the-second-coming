@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
+import com.quester.experiment.dagger2experiment.util.Logger;
 
 import org.parceler.Parcels;
 
@@ -24,15 +25,17 @@ public abstract class GameService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        startGame(extractQuestFromIntent(intent));
+        Logger.v(TAG, "onStartCommand called");
 
+        startGame(extractQuestFromIntent(intent));
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
-        stopGame();
+        Logger.v(TAG, "onDestroy called");
 
+        stopGame();
         super.onDestroy();
     }
 

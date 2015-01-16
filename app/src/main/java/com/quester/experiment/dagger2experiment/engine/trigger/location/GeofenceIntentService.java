@@ -27,16 +27,15 @@ public class GeofenceIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Logger.v(TAG, "onHandleIntent called with intent=%s", intent);
+        Logger.v(TAG, "onHandleIntent called");
 
         GeofencingEvent event = GeofencingEvent.fromIntent(intent);
-        Logger.v(TAG, "triggering event=%s", event);
 
         Geofence geofence = event.getTriggeringGeofences().get(0);
-        Logger.v(TAG, "triggering geofence=%s", geofence);
+        Logger.v(TAG, "triggering geofence=%s", geofence.toString());
 
         Location location = event.getTriggeringLocation();
-        Logger.v(TAG, "triggering location=%s", location);
+        Logger.v(TAG, "triggering location=%s", location.toString());
 
 
         ArrayList<Parcelable> wrappedCheckpoints = intent.getParcelableArrayListExtra(Constants.CHECKPOINTS_ARRAY_EXTRA_ID);
@@ -44,12 +43,11 @@ public class GeofenceIntentService extends IntentService {
         //TODO: handle multiple triggering geofences at once
         Parcelable wrappedCheckpoint = getTriggeringCheckpoint(wrappedCheckpoints, geofence);
 
-        Logger.v(TAG, "sending broadcast with checkpoint=%s", wrappedCheckpoint);
-        sendBroadcast(new Intent("Entered checkpoint area")
+        Logger.v(TAG, "sending broadcast...");
+        sendBroadcast(new Intent(Constants.GEOFENCE_ENTERED_ACTION)
                         .putExtra(Constants.CHECKPOINT_EXTRA_ID, wrappedCheckpoint)
                         .putExtra(Constants.LOCATION_EXTRA_ID, location)
         );
-        Logger.v(TAG, "broadcast sent");
     }
 
     private Parcelable getTriggeringCheckpoint(ArrayList<Parcelable> wrappedCheckpoints, Geofence triggeringGeofence) {

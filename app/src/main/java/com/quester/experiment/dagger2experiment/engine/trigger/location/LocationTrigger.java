@@ -53,6 +53,7 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
     @Override
     public void stop() {
         geofencesTracker.stop();
+        context.unregisterReceiver(this);
     }
 
     @Override
@@ -62,7 +63,7 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Logger.d(TAG, "onReceive is called with intent %s", intent.toString());
+        Logger.d(TAG, "onReceive is called");
 
         Checkpoint triggeringCheckpoint = extractCheckpointFromIntent(intent);
         Location location = extractLocationFromIntent(intent);
@@ -79,7 +80,7 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
             return Parcels.unwrap(intent.getParcelableExtra(Constants.CHECKPOINT_EXTRA_ID));
         } catch (Exception exception) {
             //TODO: granulate exception handling
-            Logger.e(TAG, "exception extracting checkpoint from intent %s", exception.getMessage());
+            Logger.e(TAG, "exception extracting checkpoint from intent");
             throw new IllegalArgumentException("Missing Checkpoint as parcelable extra in the intent");
         }
     }

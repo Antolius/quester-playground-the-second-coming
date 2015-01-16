@@ -37,7 +37,7 @@ public class GeofencesTracker implements GoogleApiClient.ConnectionCallbacks, Go
                 .addOnConnectionFailedListener(this)
                 .build();
 
-        Logger.v(TAG, "build new apiClient=%s", apiClient.toString());
+        Logger.v(TAG, "built new GoogleApiClient");
     }
 
     public void trackCheckpoints(Collection<Checkpoint> newTrackingCheckpoints) {
@@ -80,7 +80,7 @@ public class GeofencesTracker implements GoogleApiClient.ConnectionCallbacks, Go
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Logger.e(TAG, "GoogleApiClients connection failed with connectionResult=%s", connectionResult.toString());
+        Logger.e(TAG, "GoogleApiClients connection failed with errorCode=%d", connectionResult.getErrorCode());
     }
 
     private void switchToTrackingNewCheckpoints(Collection<Checkpoint> newCheckpoints) {
