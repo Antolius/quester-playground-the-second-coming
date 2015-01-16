@@ -1,5 +1,7 @@
 package com.quester.experiment.dagger2experiment.engine.processor.javascript;
 
+import android.os.SystemClock;
+
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
 import com.quester.experiment.dagger2experiment.engine.processor.Processor;
 import com.quester.experiment.dagger2experiment.util.Logger;
@@ -15,6 +17,9 @@ public class JavaScriptProcessor implements Processor {
     public boolean isCheckpointVisitable(Checkpoint reachedCheckpoint) {
         Logger.d(TAG, "isCheckpointVisitable called with %s", reachedCheckpoint.toString());
         //TODO: implement
+
+        //simulated work:
+        SystemClock.sleep(5 * 1000);
 
         return true;
     }

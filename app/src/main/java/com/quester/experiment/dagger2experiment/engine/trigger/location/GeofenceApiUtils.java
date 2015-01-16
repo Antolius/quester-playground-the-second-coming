@@ -47,7 +47,7 @@ public class GeofenceApiUtils {
         for (Checkpoint checkpoint : checkpoints) {
             geofences.add(new Geofence.Builder()
                     .setRequestId(String.valueOf(checkpoint.getId()))
-                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL)
                     .setLoiteringDelay(LOITERING_DELAY)
                     .setCircularRegion(checkpoint.getArea().aproximatingCircle().getCenter().getLatitude(),
                             checkpoint.getArea().aproximatingCircle().getCenter().getLongitude(),
@@ -65,7 +65,7 @@ public class GeofenceApiUtils {
                 0,
                 new Intent(context, GeofenceIntentService.class)
                         .putParcelableArrayListExtra(Constants.CHECKPOINTS_ARRAY_EXTRA_ID, wrapCheckpoints(checkpoints)),
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_ONE_SHOT);
     }
 
     private static ArrayList<Parcelable> wrapCheckpoints(Collection<Checkpoint> checkpoints) {

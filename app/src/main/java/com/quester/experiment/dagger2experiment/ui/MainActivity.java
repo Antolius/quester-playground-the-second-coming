@@ -66,7 +66,7 @@ public class MainActivity extends InjectionActivity {
 
         ButterKnife.inject(this);
 
-        Quest mockedQuest = MockedQuestUtils.getMockedLinearQuest(1, "Mocked linear quest", 3);
+        Quest mockedQuest = MockedQuestUtils.mockLinearQuest(1, "Mocked linear quest", 3);
         wrappedQuest = Parcels.wrap(mockedQuest);
 
         infoTextVeiw.setText(mockedQuest.toString());

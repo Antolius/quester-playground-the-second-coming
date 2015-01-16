@@ -15,20 +15,20 @@ import java.util.ArrayList;
  */
 public class MockedQuestUtils {
 
-    public static Quest getMockedLinearQuest(long id, String name, int size) {
-        return new Quest(id, name, getMockedLinearQuestGraph(size), new QuestMetaData());
+    public static Quest mockLinearQuest(long id, String name, int size) {
+        return new Quest(id, name, mockLinearQuestGraph(size), new QuestMetaData());
     }
 
-    public static Quest getMockedDiamondQuest(long id, String name) {
-        return new Quest(id, name, getMockedDiamondQuestGraph(), new QuestMetaData());
+    public static Quest mockDiamondQuest(long id, String name) {
+        return new Quest(id, name, mockDiamondQuestGraph(), new QuestMetaData());
     }
 
-    public static Quest getMockedPyramidQuest(long id, String name, int nuberOfRoots) {
-        return new Quest(id, name, getMockedPyramidQuestGraph(nuberOfRoots), new QuestMetaData());
+    public static Quest mockPyramidQuest(long id, String name, int nuberOfRoots) {
+        return new Quest(id, name, mockPyramidQuestGraph(nuberOfRoots), new QuestMetaData());
     }
 
-    public static QuestGraph getMockedPyramidQuestGraph(int numberOfRoots) {
-        ArrayList<Checkpoint> checkpoints = getMockedCheckpoints(numberOfRoots + 1, numberOfRoots);
+    public static QuestGraph mockPyramidQuestGraph(int numberOfRoots) {
+        ArrayList<Checkpoint> checkpoints = mockCheckpoints(numberOfRoots + 1, numberOfRoots);
         QuestGraph questGraph = new QuestGraph(checkpoints);
         for (int i = 0; i < numberOfRoots; i++) {
             questGraph.addEdge(checkpoints.get(i), checkpoints.get(numberOfRoots));
@@ -36,8 +36,8 @@ public class MockedQuestUtils {
         return questGraph;
     }
 
-    public static QuestGraph getMockedDiamondQuestGraph() {
-        ArrayList<Checkpoint> checkpoints = getMockedCheckpoints(4, 1);
+    public static QuestGraph mockDiamondQuestGraph() {
+        ArrayList<Checkpoint> checkpoints = mockCheckpoints(4, 1);
         QuestGraph questGraph = new QuestGraph(checkpoints);
         questGraph.addEdge(checkpoints.get(0), checkpoints.get(1));
         questGraph.addEdge(checkpoints.get(0), checkpoints.get(2));
@@ -46,8 +46,8 @@ public class MockedQuestUtils {
         return questGraph;
     }
 
-    public static QuestGraph getMockedLinearQuestGraph(int size) {
-        ArrayList<Checkpoint> checkpoints = getMockedCheckpoints(size, 1);
+    public static QuestGraph mockLinearQuestGraph(int size) {
+        ArrayList<Checkpoint> checkpoints = mockCheckpoints(size, 1);
         QuestGraph questGraph = new QuestGraph(checkpoints);
         for (int i = 1; i < size; i++) {
             questGraph.addEdge(checkpoints.get(i - 1), checkpoints.get(i));
@@ -56,20 +56,20 @@ public class MockedQuestUtils {
         return questGraph;
     }
 
-    public static ArrayList<Checkpoint> getMockedCheckpoints(int size, int numberOfRoots) {
+    public static ArrayList<Checkpoint> mockCheckpoints(int size, int numberOfRoots) {
         ArrayList<Checkpoint> checkpoints = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            checkpoints.add(getMockedCheckpoint(i, "Checkpoint #" + i, i < numberOfRoots));
+            checkpoints.add(mockCheckpoint(i, "Checkpoint #" + i, i < numberOfRoots));
         }
 
         return checkpoints;
     }
 
-    public static Checkpoint getMockedCheckpoint(long id, String name, boolean isRoot) {
-        return getMockedCheckpoint(id, name, isRoot, getMockedArea(id), "eventScript-" + id, "viewHtml-" + id);
+    public static Checkpoint mockCheckpoint(long id, String name, boolean isRoot) {
+        return mockCheckpoint(id, name, isRoot, mockArea(id), "eventScript-" + id, "viewHtml-" + id);
     }
 
-    public static Checkpoint getMockedCheckpoint(long id, String name, boolean isRoot, CircularArea area, String eventScriptName, String viewHtmlName) {
+    public static Checkpoint mockCheckpoint(long id, String name, boolean isRoot, CircularArea area, String eventScriptName, String viewHtmlName) {
         Checkpoint checkpoint = new Checkpoint();
 
         checkpoint.setId(id);
@@ -82,11 +82,11 @@ public class MockedQuestUtils {
         return checkpoint;
     }
 
-    public static CircularArea getMockedArea(long id) {
-        return getMockedArea(id, 45.8167, 15.9833, 150.0);
+    public static CircularArea mockArea(long id) {
+        return mockArea(id, 45.8167, 15.9833, 100000.0);
     }
 
-    public static CircularArea getMockedArea(long id, double latitude, double longitude, double radius) {
+    public static CircularArea mockArea(long id, double latitude, double longitude, double radius) {
         Circle circle = new Circle(new Point(latitude, longitude), radius);
         return new CircularArea(circle, id);
     }

@@ -31,6 +31,16 @@ public class GeofenceIntentService extends IntentService {
 
         GeofencingEvent event = GeofencingEvent.fromIntent(intent);
 
+        if (event.hasError()) {
+            Logger.e(TAG, "geofencing error with code %d has occurred", event.getErrorCode());
+            return;
+        }
+
+        if (event.getGeofenceTransition() == -1) {
+            Logger.w(TAG, "geofence event not describing transition! Triggering intents action is %s", intent.getAction());
+            return;
+        }
+
         Geofence geofence = event.getTriggeringGeofences().get(0);
         Logger.v(TAG, "triggering geofence=%s", geofence.toString());
 
