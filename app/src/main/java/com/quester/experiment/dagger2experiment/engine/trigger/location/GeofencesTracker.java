@@ -83,6 +83,15 @@ public class GeofencesTracker implements GoogleApiClient.ConnectionCallbacks, Go
         Logger.e(TAG, "GoogleApiClients connection failed with errorCode=%d", connectionResult.getErrorCode());
     }
 
+    public Checkpoint getTrackingCheckpointById(long checkpointId) {
+        for (Checkpoint checkpoint : trackingCheckpoints) {
+            if (checkpoint.getId() == checkpointId) {
+                return checkpoint;
+            }
+        }
+        return null;
+    }
+
     private void switchToTrackingNewCheckpoints(Collection<Checkpoint> newCheckpoints) {
         GeofenceApiUtils.removeGeofencesForCheckpoints(apiClient, trackingCheckpoints);
         GeofenceApiUtils.addGeofencesForCheckpoints(context, apiClient, newCheckpoints);

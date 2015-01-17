@@ -1,5 +1,9 @@
 package com.quester.experiment.dagger2experiment.engine;
 
+import android.app.NotificationManager;
+import android.support.v4.app.NotificationCompat;
+
+import com.quester.experiment.dagger2experiment.R;
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
 import com.quester.experiment.dagger2experiment.data.quest.QuestGraphUtils;
@@ -12,6 +16,7 @@ import com.quester.experiment.dagger2experiment.util.Logger;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -100,14 +105,37 @@ public class GameEngineService extends GameService implements CheckpointReachedL
     }
 
     private void visitCheckpoint(Checkpoint visitedCheckpoint) {
-        Logger.d(TAG, "visited checkpoint %s" + visitedCheckpoint.toString());
-        //TODO: send notification!
+        Logger.d(TAG, "visited checkpoint %s", visitedCheckpoint.toString());
+        sendNotification(visitedCheckpoint);
 
         QuestState currentQuestState = gameStateProvider.getGameState().getQuestState();
-
         currentQuestState.setCheckpointAsVisited(visitedCheckpoint);
-        registerReachableCheckpoints(currentQuestState.getQuestGraph().getChildren(visitedCheckpoint));
 
-        gameStateProvider.saveGameState();
+        Set<Checkpoint> reachableCheckpoints = currentQuestState.getQuestGraph().getChildren(visitedCheckpoint);
+        if (!reachableCheckpoints.isEmpty()) {
+            registerReachableCheckpoints(reachableCheckpoints);
+            gameStateProvider.saveGameState();
+            return;
+        }
+
+        //TODO: finish the game
+
+    }
+
+    //TODO: refactor!
+    private void sendNotification(Checkpoint visitedCheckpoint) {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentTitle("New Checkpoint reached")
+                        .setContentText("Checkpoint id=" + visitedCheckpoint.getId());
+
+        int mNotificationId = (int) visitedCheckpoint.getId();
+// Gets an instance of the NotificationManager service
+        NotificationManager mNotifyMgr =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+// Builds the notification and issues it.
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+
     }
 }

@@ -3,14 +3,11 @@ package com.quester.experiment.dagger2experiment.engine.trigger.location;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
-
-import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,19 +60,8 @@ public class GeofenceApiUtils {
         return PendingIntent.getService(
                 context,
                 0,
-                new Intent(context, GeofenceIntentService.class)
-                        .putParcelableArrayListExtra(Constants.CHECKPOINTS_ARRAY_EXTRA_ID, wrapCheckpoints(checkpoints)),
-                PendingIntent.FLAG_ONE_SHOT);
-    }
-
-    private static ArrayList<Parcelable> wrapCheckpoints(Collection<Checkpoint> checkpoints) {
-        ArrayList<Parcelable> wrappedCheckpoints = new ArrayList<>(checkpoints.size());
-
-        for (Checkpoint checkpoint : checkpoints) {
-            wrappedCheckpoints.add(Parcels.wrap(checkpoint));
-        }
-
-        return wrappedCheckpoints;
+                new Intent(context, GeofenceIntentService.class),
+                PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
 }

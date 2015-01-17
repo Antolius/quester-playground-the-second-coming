@@ -13,8 +13,6 @@ import com.quester.experiment.dagger2experiment.engine.trigger.CheckpointReached
 import com.quester.experiment.dagger2experiment.engine.trigger.Trigger;
 import com.quester.experiment.dagger2experiment.util.Logger;
 
-import org.parceler.Parcels;
-
 import java.util.Collection;
 
 import javax.inject.Inject;
@@ -29,6 +27,7 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
     private CheckpointReachedListener listener;
 
     private Context context;
+
     private GeofencesTracker geofencesTracker;
 
     @Inject
@@ -65,7 +64,7 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
     public void onReceive(Context context, Intent intent) {
         Logger.d(TAG, "onReceive is called");
 
-        Checkpoint triggeringCheckpoint = extractCheckpointFromIntent(intent);
+        Checkpoint triggeringCheckpoint = geofencesTracker.getTrackingCheckpointById(extractCheckpointIdFormIntent(intent));
         Location location = extractLocationFromIntent(intent);
 
         Logger.v(TAG, "triggeringCheckpoint=%s, location=%s", triggeringCheckpoint, location);
@@ -75,13 +74,12 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
         }
     }
 
-    private Checkpoint extractCheckpointFromIntent(Intent intent) {
+    private long extractCheckpointIdFormIntent(Intent intent) {
         try {
-            return Parcels.unwrap(intent.getParcelableExtra(Constants.CHECKPOINT_EXTRA_ID));
-        } catch (Exception exception) {
-            //TODO: granulate exception handling
-            Logger.e(TAG, "exception extracting checkpoint from intent");
-            throw new IllegalArgumentException("Missing Checkpoint as parcelable extra in the intent");
+            return Long.valueOf(intent.getStringExtra(Constants.CHECKPOINT_ID_EXTRA_ID));
+        } catch (NullPointerException exception) {
+            Logger.e(TAG, "exception extracting checkpoint id from intent");
+            throw new IllegalArgumentException("Missing checkpoint id as string extra in intent");
         }
     }
 

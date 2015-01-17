@@ -83,7 +83,7 @@ public class MockedQuestUtils {
     }
 
     public static CircularArea mockArea(long id) {
-        return mockArea(id, 45.8167, 15.9833, 100000.0);
+        return mockArea(id, 45.8167, 15.9833, 1000000.0);
     }
 
     public static CircularArea mockArea(long id, double latitude, double longitude, double radius) {
