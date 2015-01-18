@@ -1,8 +1,14 @@
 package com.quester.experiment.dagger2experiment;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.LocationManager;
 import android.util.Log;
+
+import com.quester.experiment.dagger2experiment.repository.QuestRepository;
+
+import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.android.ContextHolder;
 
 import javax.inject.Singleton;
 
@@ -52,5 +58,27 @@ public class ApplicationModule {
         LocationManager locationManager = (LocationManager) application.getSystemService(Context.LOCATION_SERVICE);
         Log.d(TAG, "call to provideLocationManager, returning " + locationManager.getClass().getSimpleName());
         return locationManager;
+    }
+
+    /**
+     *
+     */
+    @Provides
+    @Singleton
+    public QuestRepository provideQuestRepository(){
+
+        SQLiteDatabase db = application.openOrCreateDatabase("questerDb", 0, null);
+
+        migrateDatabase(db);
+
+        return new QuestRepository(db);
+    }
+
+    private void migrateDatabase(SQLiteDatabase db) {
+        ContextHolder.setContext(application);
+        Flyway flyway = new Flyway();
+        flyway.setDataSource("jdbc:sqlite:" + db.getPath(), "", "");
+        flyway.setInitOnMigrate(true);
+        flyway.migrate();
     }
 }

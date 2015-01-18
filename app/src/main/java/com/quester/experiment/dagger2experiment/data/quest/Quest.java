@@ -22,6 +22,10 @@ public class Quest {
         this.questMetaData = questMetaData;
     }
 
+    public Quest() {
+
+    }
+
     public long getId() {
         return id;
     }

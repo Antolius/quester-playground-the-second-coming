@@ -31,6 +31,15 @@ public class Checkpoint {
         this.eventsScriptFileName = eventsScriptFileName;
     }
 
+    public Checkpoint(Checkpoint checkpoint) {
+        this.id = checkpoint.getId();
+        this.name = checkpoint.getName();
+        this.root = checkpoint.isRoot();
+        this.area= checkpoint.getArea();
+        this.viewHtmlFileName = checkpoint.getViewHtmlFileName();
+        this.eventsScriptFileName = checkpoint.getEventsScriptFileName();
+    }
+
     public long getId() {
         return id;
     }
@@ -90,11 +99,7 @@ public class Checkpoint {
 
         Checkpoint that = (Checkpoint) o;
 
-        if (id != that.id) {
-            return false;
-        }
-
-        return true;
+        return id == that.id;
     }
 
     @Override

@@ -27,10 +27,10 @@ public abstract class InjectionActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        handelInjection();
+        handleInjection();
     }
 
-    private void handelInjection() {
+    private void handleInjection() {
         ApplicationComponent applicationComponent = ((InjectionApplication) getApplication()).getApplicationComponent();
         this.inject(applicationComponent);
 

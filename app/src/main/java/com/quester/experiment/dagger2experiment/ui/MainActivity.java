@@ -15,6 +15,7 @@ import com.quester.experiment.dagger2experiment.R;
 import com.quester.experiment.dagger2experiment.data.MockedQuestUtils;
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
 import com.quester.experiment.dagger2experiment.engine.GameEngineService;
+import com.quester.experiment.dagger2experiment.repository.QuestRepository;
 
 import org.parceler.Parcels;
 
@@ -39,6 +40,9 @@ public class MainActivity extends InjectionActivity {
      */
     @Inject
     protected LocationManager locationManager;
+
+    @Inject
+    protected QuestRepository questRepository;
 
     /**
      * "Default" implementation of @see InjectionActivity#inject
@@ -66,7 +70,12 @@ public class MainActivity extends InjectionActivity {
 
         ButterKnife.inject(this);
 
-        Quest mockedQuest = MockedQuestUtils.mockLinearQuest(1, "Mocked linear quest", 3);
+        Quest mockedQuest = questRepository.queryQuest(1);
+        if(mockedQuest == null) {
+            mockedQuest = MockedQuestUtils.mockLinearQuest(1, "Mocked linear quest", 3);
+            questRepository.persistQuest(mockedQuest);
+        }
+
         wrappedQuest = Parcels.wrap(mockedQuest);
 
         infoTextVeiw.setText(mockedQuest.toString());

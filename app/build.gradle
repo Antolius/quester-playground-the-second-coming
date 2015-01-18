@@ -30,6 +30,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main {
+            assets.srcDirs = ['src/main/assets', 'src/main/assets/']
+            java.srcDirs = ['src/main/java', 'src/main/assets']
+        }
+    }
 }
 
 repositories {
@@ -53,4 +59,6 @@ dependencies {
 
     //http://jakewharton.github.io/butterknife/
     compile 'com.jakewharton:butterknife:6.0.0'
+
+    compile 'org.flywaydb:flyway-core:3.0'
 }
