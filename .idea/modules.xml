@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Dagger2Experiment.iml" filepath="$PROJECT_DIR$/Dagger2Experiment.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/quester-playground-the-second-coming.iml" filepath="$PROJECT_DIR$/quester-playground-the-second-coming.iml" />
     </modules>
   </component>
 </project>
