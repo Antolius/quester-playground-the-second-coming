@@ -6,6 +6,7 @@ import com.quester.experiment.dagger2experiment.engine.processor.Processor;
 import com.quester.experiment.dagger2experiment.engine.processor.javascript.JavaScriptProcessor;
 import com.quester.experiment.dagger2experiment.engine.trigger.Trigger;
 import com.quester.experiment.dagger2experiment.engine.trigger.location.LocationTrigger;
+import com.quester.experiment.dagger2experiment.engine.trigger.time.TimeTrigger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,9 +43,13 @@ public class EngineModule {
      */
     @Provides
     @Singleton
-    public List<Trigger> provideTriggers(LocationTrigger locationTrigger) {
+    public List<Trigger> provideTriggers(LocationTrigger locationTrigger, TimeTrigger timeTrigger) {
+
+        //testing configuration uses only time trigger for convenience
         ArrayList<Trigger> triggers = new ArrayList<>(1);
-        triggers.add(locationTrigger);
+//        triggers.add(locationTrigger);
+        triggers.add(timeTrigger);
+
         return triggers;
     }
 

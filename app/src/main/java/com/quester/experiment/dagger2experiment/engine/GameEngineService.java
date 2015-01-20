@@ -59,7 +59,7 @@ public class GameEngineService extends GameService implements CheckpointReachedL
 
     @Override
     public void onCheckpointReached(Checkpoint reachedCheckpoint) {
-        Logger.d(TAG, "onCheckpointReached called with %s" + reachedCheckpoint.toString());
+        Logger.d(TAG, "onCheckpointReached called with %s", reachedCheckpoint.toString());
 
         for (Processor processor : checkpointVisitabillityProcessors) {
             if (!processor.isCheckpointVisitable(reachedCheckpoint)) {
