@@ -67,6 +67,8 @@ public class MainActivity extends InjectionActivity {
         ButterKnife.inject(this);
 
         Quest mockedQuest = MockedQuestUtils.mockLinearQuest(1, "Mocked linear quest", 3);
+        MockedQuestUtils.createFilesForCheckpoints(mockedQuest.getQuestGraph().getAllCheckpoints(), this);
+
         wrappedQuest = Parcels.wrap(mockedQuest);
 
         infoTextVeiw.setText(mockedQuest.toString());

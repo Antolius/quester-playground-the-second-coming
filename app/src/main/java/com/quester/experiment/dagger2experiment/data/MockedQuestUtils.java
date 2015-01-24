@@ -1,5 +1,7 @@
 package com.quester.experiment.dagger2experiment.data;
 
+import android.content.Context;
+
 import com.quester.experiment.dagger2experiment.data.area.Circle;
 import com.quester.experiment.dagger2experiment.data.area.CircularArea;
 import com.quester.experiment.dagger2experiment.data.area.Point;
@@ -8,7 +10,9 @@ import com.quester.experiment.dagger2experiment.data.quest.Quest;
 import com.quester.experiment.dagger2experiment.data.quest.QuestGraph;
 import com.quester.experiment.dagger2experiment.data.quest.QuestMetaData;
 
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by Josip on 15/01/2015!
@@ -66,7 +70,7 @@ public class MockedQuestUtils {
     }
 
     public static Checkpoint mockCheckpoint(long id, String name, boolean isRoot) {
-        return mockCheckpoint(id, name, isRoot, mockArea(id), "eventScript-" + id, "viewHtml-" + id);
+        return mockCheckpoint(id, name, isRoot, mockArea(id), "eventScript-" + id + ".js", "viewHtml-" + id + ".html");
     }
 
     public static Checkpoint mockCheckpoint(long id, String name, boolean isRoot, CircularArea area, String eventScriptName, String viewHtmlName) {
@@ -89,6 +93,53 @@ public class MockedQuestUtils {
     public static CircularArea mockArea(long id, double latitude, double longitude, double radius) {
         Circle circle = new Circle(new Point(latitude, longitude), radius);
         return new CircularArea(circle, id);
+    }
+
+    public static void createFilesForCheckpoints(Collection<Checkpoint> checkpoints, Context context) {
+        for (Checkpoint c : checkpoints) {
+            createFilesForCheckpoint(c, context);
+        }
+    }
+
+    public static void createFilesForCheckpoint(Checkpoint checkpoint, Context context) {
+        createFilesForCheckpoint(checkpoint, getDefaultScript(checkpoint), getDefaultView(checkpoint), context);
+    }
+
+    private static String getDefaultView(Checkpoint checkpoint) {
+        return "<h1>Welcome to " + checkpoint.getName() + "</h1>\n" +
+                "<p> checkpointId = " + checkpoint.getId() + "</p>\n";
+    }
+
+    private static String getDefaultScript(Checkpoint checkpoint) {
+        return "function f() {\n" +
+                "   if (PERSISTENT_GAME_OBJECT.executedScripts == null) {\n" +
+                "       PERSISTENT_GAME_OBJECT.executedScripts = [];\n" +
+                "   }\n" +
+                "   PERSISTENT_GAME_OBJECT.executedScripts[PERSISTENT_GAME_OBJECT.executedScripts.length] = {\n" +
+                "       'scriptName' : '" + checkpoint.getEventsScriptFileName() + "',\n" +
+                "       'checkpointName' : '" + checkpoint.getName() + "',\n" +
+                "       'checkpointId' : " + checkpoint.getId() + "\n" +
+                "   };\n" +
+                "   return true;\n" +
+                "};\n" +
+                "f();\n";
+    }
+
+    public static void createFilesForCheckpoint(Checkpoint checkpoint, String script, String view, Context context) {
+        createFile(checkpoint.getEventsScriptFileName(), script, context);
+        createFile(checkpoint.getViewHtmlFileName(), view, context);
+    }
+
+    private static void createFile(String fileName, String fileContent, Context context) {
+        FileOutputStream outputStream;
+
+        try {
+            outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+            outputStream.write(fileContent.getBytes());
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

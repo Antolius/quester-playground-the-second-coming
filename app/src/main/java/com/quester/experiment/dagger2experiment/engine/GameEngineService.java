@@ -8,8 +8,8 @@ import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
 import com.quester.experiment.dagger2experiment.data.quest.QuestGraphUtils;
 import com.quester.experiment.dagger2experiment.engine.processor.Processor;
+import com.quester.experiment.dagger2experiment.engine.state.GameState;
 import com.quester.experiment.dagger2experiment.engine.state.GameStateProvider;
-import com.quester.experiment.dagger2experiment.engine.state.QuestState;
 import com.quester.experiment.dagger2experiment.engine.trigger.CheckpointReachedListener;
 import com.quester.experiment.dagger2experiment.engine.trigger.Trigger;
 import com.quester.experiment.dagger2experiment.util.Logger;
@@ -108,10 +108,10 @@ public class GameEngineService extends GameService implements CheckpointReachedL
         Logger.d(TAG, "visited checkpoint %s", visitedCheckpoint.toString());
         sendNotification(visitedCheckpoint);
 
-        QuestState currentQuestState = gameStateProvider.getGameState().getQuestState();
-        currentQuestState.setCheckpointAsVisited(visitedCheckpoint);
+        GameState gameState = gameStateProvider.getGameState();
+        gameState.setCheckpointAsVisited(visitedCheckpoint);
 
-        Set<Checkpoint> reachableCheckpoints = currentQuestState.getQuestGraph().getChildren(visitedCheckpoint);
+        Set<Checkpoint> reachableCheckpoints = gameState.getQuestGraph().getChildren(visitedCheckpoint);
         if (!reachableCheckpoints.isEmpty()) {
             registerReachableCheckpoints(reachableCheckpoints);
             gameStateProvider.saveGameState();
