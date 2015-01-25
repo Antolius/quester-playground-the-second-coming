@@ -1,8 +1,6 @@
-package com.quester.experiment.dagger2experiment.engine.processor;
+package com.quester.experiment.dagger2experiment.util;
 
 import android.content.Context;
-
-import com.quester.experiment.dagger2experiment.util.Logger;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -12,11 +10,11 @@ import java.io.InputStreamReader;
 /**
  * Created by Josip on 24/01/2015!
  */
-public class ScriptLoader {
+public class FileLoader {
 
     private static final String TAG = "ScriptLoader";
 
-    public String readFile(String fileName, Context context) {
+    public static String readFile(String fileName, Context context) {
         FileInputStream inputStream;
 
         try {
@@ -30,13 +28,16 @@ public class ScriptLoader {
         }
     }
 
-    private String convertStreamFoString(FileInputStream inputStream) throws IOException {
+    private static String convertStreamFoString(FileInputStream inputStream) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder sb = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+        try {
             String line;
             while ((line = reader.readLine()) != null) {
                 sb.append(line);
             }
+        } finally {
+            reader.close();
         }
         return sb.toString();
     }

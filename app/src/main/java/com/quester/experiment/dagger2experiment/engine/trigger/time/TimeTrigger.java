@@ -17,13 +17,15 @@ public class TimeTrigger implements Trigger {
 
     public static final String TAG = "TimeTrigger";
 
-    private static final long DELAY = 5 * 1000L;
+    private static final long DELAY = 10 * 1000L;
 
     private CheckpointReachedListener callback;
 
     private Checkpoint reachableCheckpoint;
 
     private TimeDelayedTask currentTask;
+
+    private boolean shouldStop = false;
 
     @Override
     public void setCheckpointReachedListener(CheckpointReachedListener callback) {
@@ -32,24 +34,30 @@ public class TimeTrigger implements Trigger {
 
     @Override
     public void start() {
+        shouldStop = false;
     }
 
     @Override
     public void stop() {
+        shouldStop = true;
         currentTask.cancel(true);
     }
 
     @Override
     public void registerReachableCheckpoints(Collection<Checkpoint> reachableCheckpoints) {
-        if (currentTask != null) {
-            currentTask.cancel(true);
-        }
-
         if (reachableCheckpoints == null || reachableCheckpoints.isEmpty()) {
             return;
         }
 
         reachableCheckpoint = reachableCheckpoints.iterator().next();
+        executeNewTask();
+    }
+
+    private void executeNewTask() {
+        if (currentTask != null) {
+            currentTask.cancel(true);
+        }
+
         currentTask = new TimeDelayedTask();
         currentTask.execute();
     }
@@ -66,6 +74,10 @@ public class TimeTrigger implements Trigger {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             callback.onCheckpointReached(reachableCheckpoint);
+
+            if (!shouldStop) {
+                executeNewTask();
+            }
         }
     }
 }

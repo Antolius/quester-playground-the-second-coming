@@ -70,7 +70,7 @@ public class MockedQuestUtils {
     }
 
     public static Checkpoint mockCheckpoint(long id, String name, boolean isRoot) {
-        return mockCheckpoint(id, name, isRoot, mockArea(id), "eventScript-" + id + ".js", "viewHtml-" + id + ".html");
+        return mockCheckpoint(id, name, isRoot, mockArea(id), "mockedScript", "mockedView");
     }
 
     public static Checkpoint mockCheckpoint(long id, String name, boolean isRoot, CircularArea area, String eventScriptName, String viewHtmlName) {
@@ -97,6 +97,8 @@ public class MockedQuestUtils {
 
     public static void createFilesForCheckpoints(Collection<Checkpoint> checkpoints, Context context) {
         for (Checkpoint c : checkpoints) {
+            c.setEventsScriptFileName("eventScript-" + c.getId() + ".js");
+            c.setViewHtmlFileName("viewHtml-" + c.getId() + ".html");
             createFilesForCheckpoint(c, context);
         }
     }
@@ -106,14 +108,37 @@ public class MockedQuestUtils {
     }
 
     private static String getDefaultView(Checkpoint checkpoint) {
-        return "<h1>Welcome to " + checkpoint.getName() + "</h1>\n" +
-                "<p> checkpointId = " + checkpoint.getId() + "</p>\n";
+        return "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<body>\n" +
+                "<h1>Welcome to " + checkpoint.getName() + "</h1>\n" +
+                "<p> checkpointId = " + checkpoint.getId() + "</p>\n" +
+                "<p id=\"pgo\"></p>\n" +
+                "<script>\n" +
+                "var pgo = JSON.parse(gameState.getPersistentGameObject());\n" +
+                "if (pgo.viewdHtmls == null) {\n" +
+                "   pgo.viewdHtmls = [];\n" +
+                "}\n" +
+                "pgo.viewdHtmls[pgo.viewdHtmls.length] = {" +
+                "       'viewName' : '" + checkpoint.getViewHtmlFileName() + "',\n" +
+                "       'checkpointName' : '" + checkpoint.getName() + "',\n" +
+                "       'checkpointId' : " + checkpoint.getId() + "\n" +
+                "   };\n" +
+                "document.getElementById(\"pgo\").innerHTML = JSON.stringify(pgo);\n" +
+                "gameState.savePersistentGameObject(JSON.stringify(pgo));\n" +
+                "</script>\n" +
+                "</body>\n" +
+                "</html>";
     }
 
     private static String getDefaultScript(Checkpoint checkpoint) {
         return "function f() {\n" +
                 "   if (PERSISTENT_GAME_OBJECT.executedScripts == null) {\n" +
                 "       PERSISTENT_GAME_OBJECT.executedScripts = [];\n" +
+                "   } else {\n" +
+                "       if (PERSISTENT_GAME_OBJECT.viewdHtmls == null || PERSISTENT_GAME_OBJECT.viewdHtmls.length < PERSISTENT_GAME_OBJECT.executedScripts.length) {\n" +
+                "           return false;\n" +
+                "       }\n" +
                 "   }\n" +
                 "   PERSISTENT_GAME_OBJECT.executedScripts[PERSISTENT_GAME_OBJECT.executedScripts.length] = {\n" +
                 "       'scriptName' : '" + checkpoint.getEventsScriptFileName() + "',\n" +

@@ -3,14 +3,15 @@ package com.quester.experiment.dagger2experiment.engine.processor.javascript;
 import android.content.Context;
 
 import com.quester.experiment.dagger2experiment.engine.EngineScope;
-import com.quester.experiment.dagger2experiment.engine.processor.ScriptLoader;
 
 import javax.inject.Inject;
+
+import static com.quester.experiment.dagger2experiment.util.FileLoader.readFile;
 
 /**
  * Created by Josip on 24/01/2015!
  */
-public class JavaScriptLoader extends ScriptLoader {
+public class JavaScriptLoader {
 
     public static final String JAVA_SCRIPT_EXTENSION = "js";
     private Context context;

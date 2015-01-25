@@ -1,5 +1,7 @@
 package com.quester.experiment.dagger2experiment;
 
+import com.quester.experiment.dagger2experiment.engine.state.GameStateModule;
+import com.quester.experiment.dagger2experiment.ui.CheckpointReachedActivity;
 import com.quester.experiment.dagger2experiment.ui.MainActivity;
 
 import javax.inject.Singleton;
@@ -14,13 +16,16 @@ import dagger.Component;
  */
 @Singleton
 @Component(modules = {
-        ApplicationModule.class
+        ApplicationModule.class,
+        GameStateModule.class
 })
 public interface ApplicationComponent {
 
     void injectApplication(InjectionApplication application);
 
     void injectActivity(MainActivity activity);
+
+    void injectActivity(CheckpointReachedActivity activity);
 
     /*
     other injectActivity methods go here

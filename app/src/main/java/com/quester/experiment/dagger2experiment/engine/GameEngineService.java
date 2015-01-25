@@ -1,6 +1,8 @@
 package com.quester.experiment.dagger2experiment.engine;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
 import com.quester.experiment.dagger2experiment.R;
@@ -12,6 +14,7 @@ import com.quester.experiment.dagger2experiment.engine.state.GameState;
 import com.quester.experiment.dagger2experiment.engine.state.GameStateProvider;
 import com.quester.experiment.dagger2experiment.engine.trigger.CheckpointReachedListener;
 import com.quester.experiment.dagger2experiment.engine.trigger.Trigger;
+import com.quester.experiment.dagger2experiment.ui.CheckpointReachedActivity;
 import com.quester.experiment.dagger2experiment.util.Logger;
 
 import java.util.Collection;
@@ -119,15 +122,27 @@ public class GameEngineService extends GameService implements CheckpointReachedL
         }
 
         //TODO: finish the game
-
+        stopGame();
     }
 
     //TODO: refactor!
     private void sendNotification(Checkpoint visitedCheckpoint) {
+        Intent resultIntent = new Intent(this, CheckpointReachedActivity.class);
+
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        resultIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_launcher)
                         .setContentTitle("New Checkpoint reached")
+                        .setContentIntent(resultPendingIntent)
+                        .setAutoCancel(true)
                         .setContentText("Checkpoint id=" + visitedCheckpoint.getId());
 
         int mNotificationId = (int) visitedCheckpoint.getId();
