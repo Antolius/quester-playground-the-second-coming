@@ -11,10 +11,15 @@ import dagger.Provides;
 @Module
 public class GameStateModule {
 
+    private static GameStateProvider gameStateProvider;
+
     @Provides
     @Singleton
     public GameStateProvider provideGameStateProvider() {
-        return new GameStateProvider();
+        if (gameStateProvider == null) {
+            gameStateProvider = new GameStateProvider();
+        }
+        return gameStateProvider;
     }
 
 }

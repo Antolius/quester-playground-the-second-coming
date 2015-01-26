@@ -15,6 +15,7 @@ import com.quester.experiment.dagger2experiment.R;
 import com.quester.experiment.dagger2experiment.data.MockedQuestUtils;
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
 import com.quester.experiment.dagger2experiment.engine.GameEngineService;
+import com.quester.experiment.dagger2experiment.engine.GameService;
 
 import org.parceler.Parcels;
 
@@ -30,7 +31,7 @@ public class MainActivity extends InjectionActivity {
     private Parcelable wrappedQuest;
 
     @InjectView(R.id.text_view)
-    TextView infoTextVeiw;
+    protected TextView infoTextView;
 
     private static final String TAG = "MainActivity";
 
@@ -42,8 +43,6 @@ public class MainActivity extends InjectionActivity {
 
     /**
      * "Default" implementation of @see InjectionActivity#inject
-     *
-     * @param applicationComponent
      */
     @Override
     protected void inject(ApplicationComponent applicationComponent) {
@@ -52,8 +51,6 @@ public class MainActivity extends InjectionActivity {
 
     /**
      * Calling super.onCreate will trigger dependency injection that will in turn use @see MainActivity#inject method.
-     *
-     * @param savedInstanceState
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,14 +64,16 @@ public class MainActivity extends InjectionActivity {
         ButterKnife.inject(this);
 
         Quest mockedQuest = MockedQuestUtils.mockLinearQuest(1, "Mocked linear quest", 3);
+        MockedQuestUtils.createFilesForCheckpoints(mockedQuest.getQuestGraph().getAllCheckpoints(), this);
+
         wrappedQuest = Parcels.wrap(mockedQuest);
 
-        infoTextVeiw.setText(mockedQuest.toString());
+        infoTextView.setText(mockedQuest.toString());
     }
 
     @OnClick(R.id.start_button)
     public void starService() {
-        startService(new Intent(this, GameEngineService.class).putExtra(GameEngineService.QUEST_EXTRA_ID, wrappedQuest));
+        startService(new Intent(this, GameEngineService.class).putExtra(GameService.QUEST_EXTRA_ID, wrappedQuest));
     }
 
     @OnClick(R.id.stop_button)

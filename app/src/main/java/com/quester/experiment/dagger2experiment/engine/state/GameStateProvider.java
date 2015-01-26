@@ -18,9 +18,7 @@ public class GameStateProvider {
     public void initiate(Quest quest) {
         Logger.v(TAG, "initiated with quest %s, id=%d", quest.getName(), quest.getId());
 
-        gameState = new GameState();
-        gameState.setPersistentGameObject(new PersistentGameObject());
-        gameState.setQuestState(new QuestState(quest.getQuestGraph()));
+        gameState = new GameState(quest.getQuestGraph(), "{}");
 
         questName = quest.getName();
         questId = quest.getId();

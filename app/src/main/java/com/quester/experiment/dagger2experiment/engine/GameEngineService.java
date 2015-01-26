@@ -1,6 +1,8 @@
 package com.quester.experiment.dagger2experiment.engine;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
 import com.quester.experiment.dagger2experiment.R;
@@ -8,10 +10,11 @@ import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
 import com.quester.experiment.dagger2experiment.data.quest.QuestGraphUtils;
 import com.quester.experiment.dagger2experiment.engine.processor.Processor;
+import com.quester.experiment.dagger2experiment.engine.state.GameState;
 import com.quester.experiment.dagger2experiment.engine.state.GameStateProvider;
-import com.quester.experiment.dagger2experiment.engine.state.QuestState;
 import com.quester.experiment.dagger2experiment.engine.trigger.CheckpointReachedListener;
 import com.quester.experiment.dagger2experiment.engine.trigger.Trigger;
+import com.quester.experiment.dagger2experiment.ui.CheckpointReachedActivity;
 import com.quester.experiment.dagger2experiment.util.Logger;
 
 import java.util.Collection;
@@ -59,7 +62,7 @@ public class GameEngineService extends GameService implements CheckpointReachedL
 
     @Override
     public void onCheckpointReached(Checkpoint reachedCheckpoint) {
-        Logger.d(TAG, "onCheckpointReached called with %s" + reachedCheckpoint.toString());
+        Logger.d(TAG, "onCheckpointReached called with %s", reachedCheckpoint.toString());
 
         for (Processor processor : checkpointVisitabillityProcessors) {
             if (!processor.isCheckpointVisitable(reachedCheckpoint)) {
@@ -108,10 +111,10 @@ public class GameEngineService extends GameService implements CheckpointReachedL
         Logger.d(TAG, "visited checkpoint %s", visitedCheckpoint.toString());
         sendNotification(visitedCheckpoint);
 
-        QuestState currentQuestState = gameStateProvider.getGameState().getQuestState();
-        currentQuestState.setCheckpointAsVisited(visitedCheckpoint);
+        GameState gameState = gameStateProvider.getGameState();
+        gameState.setCheckpointAsVisited(visitedCheckpoint);
 
-        Set<Checkpoint> reachableCheckpoints = currentQuestState.getQuestGraph().getChildren(visitedCheckpoint);
+        Set<Checkpoint> reachableCheckpoints = gameState.getQuestGraph().getChildren(visitedCheckpoint);
         if (!reachableCheckpoints.isEmpty()) {
             registerReachableCheckpoints(reachableCheckpoints);
             gameStateProvider.saveGameState();
@@ -119,15 +122,27 @@ public class GameEngineService extends GameService implements CheckpointReachedL
         }
 
         //TODO: finish the game
-
+        stopGame();
     }
 
     //TODO: refactor!
     private void sendNotification(Checkpoint visitedCheckpoint) {
+        Intent resultIntent = new Intent(this, CheckpointReachedActivity.class);
+
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        resultIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_launcher)
                         .setContentTitle("New Checkpoint reached")
+                        .setContentIntent(resultPendingIntent)
+                        .setAutoCancel(true)
                         .setContentText("Checkpoint id=" + visitedCheckpoint.getId());
 
         int mNotificationId = (int) visitedCheckpoint.getId();
