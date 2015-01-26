@@ -46,14 +46,19 @@ public class CheckpointReachedActivity extends InjectionActivity {
 
         Logger.v(TAG, "injected dependencies");
 
+        renderCurrentCheckpoint();
+    }
+
+    private void renderCurrentCheckpoint() {
         Checkpoint activeCheckpoint = gameStateProvider.getGameState().getActiveCheckpoint();
         setTitle(activeCheckpoint.getName());
+        initiateWebView();
+        webView.loadData(readFile(activeCheckpoint.getViewHtmlFileName(), this), "text/html", HTTP.UTF_8);
+    }
 
+    private void initiateWebView() {
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new JavaScriptInterfaceWrapper(gameStateProvider.getGameState()), "gameState");
-
-        webView.loadData(readFile(activeCheckpoint.getViewHtmlFileName(), this), "text/html", HTTP.UTF_8);
-
     }
 }

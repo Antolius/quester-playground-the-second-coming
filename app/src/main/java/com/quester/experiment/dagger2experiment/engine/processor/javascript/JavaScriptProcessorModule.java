@@ -16,22 +16,13 @@ import dagger.Provides;
 @Module
 public class JavaScriptProcessorModule {
 
-//    @Provides
-//    @Singleton
-//    public JavaScriptProcessor provideJavaScriptProcessor(GameStateProvider gameStateProvider, Scriptable sharedScope) {
-//        return new JavaScriptProcessor(gameStateProvider, sharedScope);
-//    }
-
-    /*
-     * it is enough to provide only the loves level dependencies
-     * (ie, there is no need to explicitly list JavaScriptProcessor)
-     */
+    private static final boolean ARE_OBJECTS_FINAL = true;
 
     @Provides
     @Singleton
     public Scriptable provideSharedScope() {
         try {
-            return Context.enter().initStandardObjects(null, true);
+            return Context.enter().initStandardObjects(null, ARE_OBJECTS_FINAL);
         } finally {
             Context.exit();
         }

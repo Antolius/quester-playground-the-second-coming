@@ -2,7 +2,6 @@ package com.quester.experiment.dagger2experiment.engine.processor.javascript;
 
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
 import com.quester.experiment.dagger2experiment.engine.processor.Processor;
-import com.quester.experiment.dagger2experiment.engine.state.GameState;
 import com.quester.experiment.dagger2experiment.engine.state.GameStateProvider;
 import com.quester.experiment.dagger2experiment.util.Logger;
 
@@ -36,11 +35,9 @@ public class JavaScriptProcessor implements Processor {
     @Override
     public boolean isCheckpointVisitable(Checkpoint reachedCheckpoint) {
         Logger.d(TAG, "isCheckpointVisitable called with %s", reachedCheckpoint.toString());
-
         if (javaScriptLoader.isJavaScriptFile(reachedCheckpoint.getEventsScriptFileName())) {
             return processCheckpoint(reachedCheckpoint);
         }
-
         return true;
     }
 
@@ -48,38 +45,46 @@ public class JavaScriptProcessor implements Processor {
         try {
             Context context = Context.enter();
             context.setOptimizationLevel(-1);
-
-            GameState gameState = gameStateProvider.getGameState();
-            Scriptable executionScope = getExecutionScope(context, gameState);
-
-            String response = Context.toString(context.evaluateString(executionScope, javaScriptLoader.loadFile(checkpoint.getEventsScriptFileName()), "checkpointScript", 1, null));
-            Logger.v(TAG, "executed script and returned %s", response);
-
-            extractAndSavePersistantGameObject(gameState, executionScope);
-
-            return Boolean.parseBoolean(response);
+            return handleScriptExecution(checkpoint, context);
         } finally {
             Context.exit();
         }
     }
 
-    private Scriptable getExecutionScope(Context context, GameState gameState) {
-        Scriptable executionScope = context.newObject(sharedScope);
+    private boolean handleScriptExecution(Checkpoint checkpoint, Context context) {
+        Scriptable executionScope = getExecutionScope(context);
+        String script = loadScript(checkpoint);
+        String response = executeScript(script, context, executionScope);
+        extractAndSavePersistentGameObject(executionScope);
+        return Boolean.parseBoolean(response);
+    }
 
+    private Scriptable getExecutionScope(Context context) {
+        Scriptable executionScope = context.newObject(sharedScope);
         executionScope.setPrototype(sharedScope);
         executionScope.setParentScope(null);
-        executionScope.put(PERSISTENT_GAME_OBJECT, executionScope, getScriptableFromString(gameState.getPersistentGameObjectAsString(), sharedScope));
 
+        Scriptable pgo = getScriptableFromString(gameStateProvider.getGameState().getPersistentGameObjectAsString(), sharedScope);
+        executionScope.put(PERSISTENT_GAME_OBJECT, executionScope, pgo);
         return executionScope;
     }
 
-    private void extractAndSavePersistantGameObject(GameState gameState, Scriptable executionScope) {
+    private String loadScript(Checkpoint checkpoint) {
+        return javaScriptLoader.loadFile(checkpoint.getEventsScriptFileName());
+    }
+
+    private String executeScript(String script, Context context, Scriptable executionScope) {
+        Object result = context.evaluateString(executionScope, script, "checkpointScript", 1, null);
+        String response = Context.toString(result);
+        Logger.v(TAG, "executed script and returned %s", response);
+        return response;
+    }
+
+    private void extractAndSavePersistentGameObject(Scriptable executionScope) {
         Scriptable pgoScriptable = (Scriptable) executionScope.get(PERSISTENT_GAME_OBJECT, executionScope);
         String pgoString = getStringFromScriptable(pgoScriptable, sharedScope);
-
         Logger.v(TAG, "persistentGameObject after script execution: %s", pgoString);
-
-        gameState.setPersistentGameObject(pgoString);
+        gameStateProvider.getGameState().setPersistentGameObject(pgoString);
     }
 
 }

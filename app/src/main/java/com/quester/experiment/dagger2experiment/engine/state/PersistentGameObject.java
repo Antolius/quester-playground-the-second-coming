@@ -15,7 +15,7 @@ public class PersistentGameObject {
     }
 
     public static PersistentGameObject fromString(String stringRepresentation) throws JSONException {
-        new JSONObject(stringRepresentation);
+        validateInputStringAsJson(stringRepresentation);
         return new PersistentGameObject(stringRepresentation);
     }
 
@@ -31,4 +31,7 @@ public class PersistentGameObject {
         return new JSONObject(stringRepresentation);
     }
 
+    private static void validateInputStringAsJson(String stringRepresentation) throws JSONException {
+        new JSONObject(stringRepresentation);
+    }
 }
