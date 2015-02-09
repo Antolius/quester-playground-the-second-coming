@@ -1,5 +1,6 @@
 package com.quester.experiment.dagger2experiment;
 
+import com.quester.experiment.dagger2experiment.engine.state.GameStateModule;
 import com.quester.experiment.dagger2experiment.persistence.module.DatabaseModule;
 import com.quester.experiment.dagger2experiment.ui.CheckpointReachedActivity;
 import com.quester.experiment.dagger2experiment.ui.MainActivity;
@@ -17,7 +18,7 @@ import dagger.Component;
 @Singleton
 @Component(modules = {
         ApplicationModule.class,
-        DatabaseModule.class
+        DatabaseModule.class,
         GameStateModule.class
 })
 public interface ActivityInjectionComponent {
