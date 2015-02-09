@@ -55,4 +55,7 @@ dependencies {
     compile 'com.jakewharton:butterknife:6.0.0'
 
     compile 'org.flywaydb:flyway-core:3.0'
+
+    //https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino
+    compile 'org.mozilla:rhino:1.7R4'
 }

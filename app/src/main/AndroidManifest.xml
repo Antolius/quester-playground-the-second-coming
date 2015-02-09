@@ -30,6 +30,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.CheckpointReachedActivity"
+            android:label="Dagger2Experiment">
+        </activity>
+
         <!-- SERVICES -->
 
         <service
