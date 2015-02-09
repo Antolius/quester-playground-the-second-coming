@@ -1,5 +1,6 @@
 package com.quester.experiment.dagger2experiment;
 
+import com.quester.experiment.dagger2experiment.persistence.module.DatabaseModule;
 import com.quester.experiment.dagger2experiment.ui.MainActivity;
 
 import javax.inject.Singleton;
@@ -14,9 +15,10 @@ import dagger.Component;
  */
 @Singleton
 @Component(modules = {
-        ApplicationModule.class
+        ApplicationModule.class,
+        DatabaseModule.class
 })
-public interface ApplicationComponent {
+public interface ActivityInjectionComponent {
 
     void injectApplication(InjectionApplication application);
 
