@@ -53,4 +53,6 @@ dependencies {
 
     //http://jakewharton.github.io/butterknife/
     compile 'com.jakewharton:butterknife:6.0.0'
+
+    compile 'org.flywaydb:flyway-core:3.0'
 }
