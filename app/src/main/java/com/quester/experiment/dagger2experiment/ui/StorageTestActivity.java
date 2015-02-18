@@ -29,7 +29,12 @@ public class StorageTestActivity extends ActionBarActivity {
         //zatim stvori nekoliko fajlova,
         //zatim ih prikaže u listi
         //te prikaže content na odabir fajla
-        
+
+        //dodatno:
+        //dohvati fajlove u external storage
+        //pretraži ih u potrazi za questovima
+        //prikaži ih u listi
+        //instaliraj odabrani quest
     }
 
 
