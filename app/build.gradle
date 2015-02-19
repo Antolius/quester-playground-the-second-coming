@@ -56,4 +56,5 @@ dependencies {
 
     //https://developer.mozilla.org/en-US/docs/Mozilla/Projects/Rhino
     compile 'org.mozilla:rhino:1.7R4'
+    compile 'net.lingala.zip4j:zip4j:1.2.4'
 }
