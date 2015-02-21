@@ -19,21 +19,23 @@ public abstract class InjectionActivity extends ActionBarActivity {
      * This method is created so that proper injectActivity may be called without every activity
      * having to acquire instance of @see ApplicationComponent on their own.
      *
-     * @param applicationComponent
+     * @param activityInjectionComponent
      */
-    protected abstract void inject(ApplicationComponent applicationComponent);
+    protected abstract void inject(ActivityInjectionComponent activityInjectionComponent);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        handelInjection();
+        handleInjection();
     }
 
-    private void handelInjection() {
-        ApplicationComponent applicationComponent = ((InjectionApplication) getApplication()).getApplicationComponent();
-        this.inject(applicationComponent);
+    private void handleInjection() {
+        ActivityInjectionComponent activityInjectionComponent = ((InjectionApplication) getApplication()).getActivityInjectionComponent();
+        this.inject(activityInjectionComponent);
 
-        Log.d(TAG, "injected " + this.getClass().getSimpleName() + " into " + applicationComponent.getClass().getSimpleName());
+        Log.d(TAG, "injected " + this.getClass().getSimpleName() + " into " + activityInjectionComponent.getClass().getSimpleName());
+
+
     }
 }

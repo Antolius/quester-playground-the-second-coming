@@ -9,12 +9,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.quester.experiment.dagger2experiment.ApplicationComponent;
+import com.quester.experiment.dagger2experiment.ActivityInjectionComponent;
+import com.quester.experiment.dagger2experiment.BuildConfig;
 import com.quester.experiment.dagger2experiment.InjectionActivity;
 import com.quester.experiment.dagger2experiment.R;
 import com.quester.experiment.dagger2experiment.data.MockedQuestUtils;
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
 import com.quester.experiment.dagger2experiment.engine.GameEngineService;
+import com.quester.experiment.dagger2experiment.persistence.QuestRepository;
 import com.quester.experiment.dagger2experiment.engine.GameService;
 
 import org.parceler.Parcels;
@@ -35,18 +37,20 @@ public class MainActivity extends InjectionActivity {
 
     private static final String TAG = "MainActivity";
 
-    /**
-     * LocationManager is injected for demo purposes.
-     */
     @Inject
     protected LocationManager locationManager;
 
+    @Inject
+    protected QuestRepository questRepository;
+
     /**
      * "Default" implementation of @see InjectionActivity#inject
+     *
+     * @param activityInjectionComponent
      */
     @Override
-    protected void inject(ApplicationComponent applicationComponent) {
-        applicationComponent.injectActivity(this);
+    protected void inject(ActivityInjectionComponent activityInjectionComponent) {
+        activityInjectionComponent.injectActivity(this);
     }
 
     /**
@@ -69,6 +73,8 @@ public class MainActivity extends InjectionActivity {
         wrappedQuest = Parcels.wrap(mockedQuest);
 
         infoTextView.setText(mockedQuest.toString());
+
+        questRepository.exists(1);
     }
 
     @OnClick(R.id.start_button)
