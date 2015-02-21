@@ -1,5 +1,9 @@
 package com.quester.experiment.dagger2experiment.data.quest;
 
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.quester.experiment.dagger2experiment.archive.QuestGraphConverter;
+
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
@@ -7,12 +11,20 @@ import org.parceler.ParcelConstructor;
  * Created by Josip on 11/01/2015!
  */
 @Parcel(Parcel.Serialization.METHOD)
+@JsonObject
 public class Quest {
 
+    @JsonField
     private long id;
+    @JsonField
     private String name;
+    @JsonField(typeConverter = QuestGraphConverter.class)
     private QuestGraph questGraph;
+    @JsonField
     private QuestMetaData questMetaData;
+
+    public Quest() {
+    }
 
     @ParcelConstructor
     public Quest(long id, String name, QuestGraph questGraph, QuestMetaData questMetaData) {

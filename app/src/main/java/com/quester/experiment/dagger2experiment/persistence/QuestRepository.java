@@ -80,6 +80,19 @@ public class QuestRepository implements DatabaseRepository<Quest> {
         );
     }
 
+    public Quest findByGlobalId(long originalId){
+
+        String[] columns = {"id"};
+
+        Rows result = database.query("quests", columns, "original_id=?", new String[]{String.valueOf(originalId)});
+
+        if (!result.moveToFirst()) {
+            return null;
+        }
+
+        return find(result.getLong("id"));
+    }
+
     public QuestGraph findGraph(long id) {
 
         HashMap<Checkpoint, HashSet<Checkpoint>> map = new HashMap<>();

@@ -4,6 +4,7 @@ import com.quester.experiment.dagger2experiment.engine.state.GameStateModule;
 import com.quester.experiment.dagger2experiment.persistence.module.DatabaseModule;
 import com.quester.experiment.dagger2experiment.ui.CheckpointReachedActivity;
 import com.quester.experiment.dagger2experiment.ui.MainActivity;
+import com.quester.experiment.dagger2experiment.ui.StorageTestActivity;
 
 import javax.inject.Singleton;
 
@@ -26,6 +27,8 @@ public interface ActivityInjectionComponent {
     void injectApplication(InjectionApplication application);
 
     void injectActivity(MainActivity activity);
+
+    void injectActivity(StorageTestActivity activity);
 
     void injectActivity(CheckpointReachedActivity activity);
 
