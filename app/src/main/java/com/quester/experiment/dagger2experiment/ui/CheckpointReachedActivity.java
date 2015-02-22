@@ -3,7 +3,7 @@ package com.quester.experiment.dagger2experiment.ui;
 import android.os.Bundle;
 import android.webkit.WebView;
 
-import com.quester.experiment.dagger2experiment.ApplicationComponent;
+import com.quester.experiment.dagger2experiment.ActivityInjectionComponent;
 import com.quester.experiment.dagger2experiment.InjectionActivity;
 import com.quester.experiment.dagger2experiment.R;
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
@@ -33,8 +33,8 @@ public class CheckpointReachedActivity extends InjectionActivity {
     protected GameStateProvider gameStateProvider;
 
     @Override
-    protected void inject(ApplicationComponent applicationComponent) {
-        applicationComponent.injectActivity(this);
+    protected void inject(ActivityInjectionComponent activityInjectionComponent) {
+        activityInjectionComponent.injectActivity(this);
     }
 
     @Override

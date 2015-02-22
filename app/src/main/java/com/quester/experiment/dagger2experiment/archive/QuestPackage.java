@@ -9,6 +9,7 @@ public class QuestPackage {
     private File file;
 
     public QuestPackage(Long id, String name, File file) {
+        this.id = id;
         this.name = name;
         this.file = file;
     }

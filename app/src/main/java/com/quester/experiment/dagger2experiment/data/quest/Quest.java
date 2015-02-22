@@ -2,7 +2,7 @@ package com.quester.experiment.dagger2experiment.data.quest;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
-import com.quester.experiment.dagger2experiment.archive.QuestGraphConverter;
+import com.quester.experiment.dagger2experiment.archive.cryptographer.QuestGraphConverter;
 
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;

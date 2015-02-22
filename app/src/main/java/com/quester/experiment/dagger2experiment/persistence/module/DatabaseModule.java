@@ -23,9 +23,9 @@ public class DatabaseModule {
 
         SQLiteDatabase sqLiteDatabase = application.openOrCreateDatabase("test", 0, null);
 
-        Flyway flyway = new Flyway();
-        flyway.setDataSource("jdbc:sqlite:" + sqLiteDatabase.getPath(), "", "");
-        flyway.migrate();
+        //Flyway flyway = new Flyway();
+        //flyway.setDataSource("jdbc:sqlite:" + sqLiteDatabase.getPath(), "", "");
+        //flyway.migrate();
 
         this.database = new Database(sqLiteDatabase);
     }

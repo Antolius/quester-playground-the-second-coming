@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Environment;
 
 import com.bluelinelabs.logansquare.LoganSquare;
+import com.quester.experiment.dagger2experiment.archive.cryptographer.QuestCryptographer;
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
 import com.quester.experiment.dagger2experiment.persistence.QuestRepository;
 import com.sromku.simple.storage.SimpleStorage;
@@ -21,86 +22,37 @@ import java.util.List;
 public class QuestArchiver {
 
     private QuestRepository repository;
-    private Storage externalStorage;
-    private Storage internalStorage;
-    private Context context;
+    private QuestStorage storage;
+    private QuestCryptographer cryptographer;
 
-    public QuestArchiver(QuestRepository repository, Context context) {
-        externalStorage = SimpleStorage.getExternalStorage();
-        internalStorage = SimpleStorage.getInternalStorage(context);
-        internalStorage.createDirectory("Quests", false);
+    public QuestArchiver(QuestRepository repository, QuestStorage storage, QuestCryptographer cryptographer) {
         this.repository = repository;
-        this.context = context;
+        this.storage = storage;
+        this.cryptographer = cryptographer;
     }
 
-    public List<QuestPackage> scanExternalStorage(){
+    public List<QuestPackage> findQuestPackages() {
 
-        return findQuestFiles("");
+        return storage.findQuestPackages();
     }
 
-    private List<QuestPackage> findQuestFiles(String directory) {
-
-        List<QuestPackage> result = new ArrayList<>();
-
-        for (File file : externalStorage.getFiles(directory, OrderType.NAME)) {
-            if (file.isDirectory() && !file.isHidden()) {
-
-                String location;
-                if (directory.isEmpty()) {
-                    location = file.getName();
-                } else {
-                    location = directory + "/" + file.getName();
-                }
-                result.addAll(findQuestFiles(location));
-                continue;
-            }
-            if (file.getName().endsWith(".qst")) {
-                String[] parts = file.getName().split("\\.|_");
-                result.add(new QuestPackage(Long.valueOf(parts[0]),parts[1],file));
-            }
-        }
-
-        return result;
-    }
-
-    public void install(QuestPackage questPackage) {
+    public void saveToArchive(QuestPackage questPackage) {
 
         Quest persisted = repository.findByGlobalId(questPackage.getId());
-        if(persisted == null){
-            unpackAndSave(questPackage);
+        if (persisted == null) {
+            repository.save(
+                    cryptographer.decryptQuest(
+                            storage.storePackageAndRetrieveScroll(questPackage)));
             return;
         }
 
-        unpack(Environment.getExternalStorageState(), questPackage.getFile());
-        Quest quest = extractQuest(externalStorage, questPackage);
-        externalStorage.deleteDirectory("Quests/"+questPackage.getDirectoryName());
+        Quest quest = cryptographer.decryptQuest(
+                storage.retrieveScroll(questPackage));
 
-        if(quest.getQuestMetaData().getVersion() > persisted.getQuestMetaData().getVersion()){
-            unpackAndSave(questPackage);
-        }
-
-    }
-
-    private void unpackAndSave(QuestPackage questPackage){
-        unpack(context.getFilesDir().getPath(), questPackage.getFile());
-        repository.save(extractQuest(internalStorage, questPackage));
-    }
-
-    private void unpack(String path, File file) {
-        try {
-            new ZipFile(file).extractAll(path + "/Quests");
-        } catch (ZipException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private Quest extractQuest(Storage storage, QuestPackage questPackage){
-        String json = storage.readTextFile("Quests/"+questPackage.getDirectoryName(), "quest.json");
-        try {
-            return LoganSquare.parse(json, Quest.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+        if (quest.getQuestMetaData().getVersion() > persisted.getQuestMetaData().getVersion()) {
+            repository.save(
+                    cryptographer.decryptQuest(
+                            storage.storePackageAndRetrieveScroll(questPackage)));
         }
     }
 }
