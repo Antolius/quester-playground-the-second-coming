@@ -1,7 +1,6 @@
 package com.quester.experiment.dagger2experiment.persistence.module;
 
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.quester.experiment.dagger2experiment.InjectionApplication;
 import com.quester.experiment.dagger2experiment.persistence.QuestRepository;
@@ -23,11 +22,16 @@ public class DatabaseModule {
 
         SQLiteDatabase sqLiteDatabase = application.openOrCreateDatabase("test", 0, null);
 
-        //Flyway flyway = new Flyway();
-        //flyway.setDataSource("jdbc:sqlite:" + sqLiteDatabase.getPath(), "", "");
-        //flyway.migrate();
+        //should enable in production or move somewhere
+        //migrate(sqLiteDatabase);
 
         this.database = new Database(sqLiteDatabase);
+    }
+
+    public void migrate(SQLiteDatabase database){
+        Flyway flyway = new Flyway();
+        flyway.setDataSource("jdbc:sqlite:" + database.getPath(), "", "");
+        flyway.migrate();
     }
 
     @Provides

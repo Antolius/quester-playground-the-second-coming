@@ -13,5 +13,6 @@
     <string name="geofence_intent_service">GeofenceIntentService</string>
     <string name="title_activity_storage_test">StorageTestActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_web_view_example">WebViewExampleActivity</string>
 
 </resources>

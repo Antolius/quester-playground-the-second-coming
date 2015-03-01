@@ -46,9 +46,9 @@ public class GeofenceApiUtils {
                     .setRequestId(String.valueOf(checkpoint.getId()))
                     .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL)
                     .setLoiteringDelay(LOITERING_DELAY)
-                    .setCircularRegion(checkpoint.getArea().aproximatingCircle().getCenter().getLatitude(),
-                            checkpoint.getArea().aproximatingCircle().getCenter().getLongitude(),
-                            (float) checkpoint.getArea().aproximatingCircle().getRadius())
+                    .setCircularRegion(checkpoint.getArea().approximatingCircle().getCenter().getLatitude(),
+                            checkpoint.getArea().approximatingCircle().getCenter().getLongitude(),
+                            (float) checkpoint.getArea().approximatingCircle().getRadius())
                     .setExpirationDuration(Geofence.NEVER_EXPIRE)
                     .build());
         }

@@ -42,8 +42,8 @@ public class QuestArchiverTest {
         QuestPackage questPackage = new QuestPackage(1L,"123", new File("test"));
         Quest quest = new Quest();
 
-        when(repository.findByGlobalId(1L)).thenReturn(null);
-        when(storage.storePackageAndRetrieveScroll(questPackage)).thenReturn("encrypted");
+        when(repository.findOneByGlobalId(1L)).thenReturn(null);
+        when(storage.getQuestScroll(questPackage)).thenReturn("encrypted");
         when(cryptographer.decryptQuest("encrypted")).thenReturn(quest);
 
         archiver.saveToArchive(questPackage);
@@ -66,10 +66,10 @@ public class QuestArchiverTest {
         fromPackageMetaData.setVersion(2);
         fromPackage.setQuestMetaData(fromPackageMetaData);
 
-        when(repository.findByGlobalId(1L)).thenReturn(persisted);
+        when(repository.findOneByGlobalId(1L)).thenReturn(persisted);
 
-        when(storage.retrieveScroll(questPackage)).thenReturn("encrypted");
-        when(storage.storePackageAndRetrieveScroll(questPackage)).thenReturn("encrypted");
+        when(storage.extractQuestScroll(questPackage)).thenReturn("encrypted");
+        when(storage.getQuestScroll(questPackage)).thenReturn("encrypted");
         when(cryptographer.decryptQuest("encrypted")).thenReturn(fromPackage);
 
         archiver.saveToArchive(questPackage);
@@ -92,9 +92,9 @@ public class QuestArchiverTest {
         fromPackageMetaData.setVersion(1);
         fromPackage.setQuestMetaData(fromPackageMetaData);
 
-        when(repository.findByGlobalId(1L)).thenReturn(persisted);
+        when(repository.findOneByGlobalId(1L)).thenReturn(persisted);
 
-        when(storage.retrieveScroll(questPackage)).thenReturn("encrypted");
+        when(storage.extractQuestScroll(questPackage)).thenReturn("encrypted");
         when(cryptographer.decryptQuest("encrypted")).thenReturn(fromPackage);
 
         archiver.saveToArchive(questPackage);

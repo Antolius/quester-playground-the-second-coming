@@ -23,7 +23,7 @@ public class FileLoader {
             inputStream.close();
             return fileContent;
         } catch (IOException e) {
-            Logger.e(TAG, "failed to load file %s, error message: %s", fileName, e.getMessage());
+            Logger.error(TAG, "failed to load file %s, error message: %s", fileName, e.getMessage());
             throw new ScriptLoadingException();
         }
     }

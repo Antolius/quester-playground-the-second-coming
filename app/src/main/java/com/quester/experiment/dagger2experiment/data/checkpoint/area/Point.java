@@ -1,4 +1,4 @@
-package com.quester.experiment.dagger2experiment.data.area;
+package com.quester.experiment.dagger2experiment.data.checkpoint.area;
 
 import android.location.Location;
 

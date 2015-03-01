@@ -1,9 +1,11 @@
 package com.quester.experiment.dagger2experiment.data.checkpoint;
 
-import com.quester.experiment.dagger2experiment.data.area.CircularArea;
+import com.quester.experiment.dagger2experiment.data.checkpoint.area.Area;
+import com.quester.experiment.dagger2experiment.data.checkpoint.area.ParcelAreaConverter;
 
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
+import org.parceler.ParcelPropertyConverter;
 
 /**
  * Created by Josip on 11/01/2015!
@@ -14,7 +16,7 @@ public class Checkpoint {
     private long id;
     private String name;
     private boolean root;
-    private CircularArea area;
+    private Area area;
     private String viewHtmlFileName;
     private String eventsScriptFileName;
 
@@ -22,7 +24,7 @@ public class Checkpoint {
     }
 
     @ParcelConstructor
-    public Checkpoint(long id, String name, boolean root, CircularArea area, String viewHtmlFileName, String eventsScriptFileName) {
+    public Checkpoint(long id, String name, boolean root,@ParcelPropertyConverter(ParcelAreaConverter.class) Area area, String viewHtmlFileName, String eventsScriptFileName) {
         this.id = id;
         this.name = name;
         this.root = root;
@@ -55,11 +57,11 @@ public class Checkpoint {
         this.root = root;
     }
 
-    public CircularArea getArea() {
+    public Area getArea() {
         return area;
     }
 
-    public void setArea(CircularArea area) {
+    public void setArea(Area area) {
         this.area = area;
     }
 

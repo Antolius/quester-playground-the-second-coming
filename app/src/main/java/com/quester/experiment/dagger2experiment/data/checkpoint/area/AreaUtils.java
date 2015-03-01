@@ -1,4 +1,4 @@
-package com.quester.experiment.dagger2experiment.data.area;
+package com.quester.experiment.dagger2experiment.data.checkpoint.area;
 
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
@@ -8,13 +8,19 @@ import static java.lang.Math.sqrt;
  */
 public class AreaUtils {
 
-    static double nonDimensionalDistance(final Point pointA, final Point pointB) {
+    /**
+     * calculates the euclidean distance between points A and B
+     * @param pointA first point
+     * @param pointB second point
+     * @return distance between points
+     */
+    public static double distance(final Point pointA, final Point pointB) {
         return sqrt(pow(pointA.getLatitude() - pointB.getLatitude(), 2) + pow(pointA.getLongitude() - pointB.getLongitude(), 2));
     }
 
     /**
      * @param nonDimensionalValue distance value without measure
-     * @param measurementUnit measurement unit to convert nonDimensionalValue to @see com.quester.experiment.dagger2experiment.data.area.Area
+     * @param measurementUnit measurement unit to convert nonDimensionalValue to @see com.quester.experiment.dagger2experiment.data.checkpoint.area.Area
      * @return distance in specified measurement unit
      */
     static double convertToDimension(final double nonDimensionalValue, int measurementUnit) {

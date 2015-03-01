@@ -4,10 +4,12 @@ import com.bluelinelabs.logansquare.typeconverters.StringBasedTypeConverter;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.quester.experiment.dagger2experiment.data.checkpoint.area.circle.CircularArea;
+import com.quester.experiment.dagger2experiment.data.checkpoint.area.circle.CircularAreaConverter;
+import com.quester.experiment.dagger2experiment.data.checkpoint.area.rectangle.RectangularArea;
+import com.quester.experiment.dagger2experiment.data.checkpoint.area.rectangle.RectangularAreaConverter;
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
-import com.quester.experiment.dagger2experiment.data.quest.Quest;
 import com.quester.experiment.dagger2experiment.data.quest.QuestGraph;
-import com.quester.experiment.dagger2experiment.data.quest.QuestMetaData;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -103,8 +105,6 @@ public class QuestGraphConverter extends StringBasedTypeConverter<QuestGraph> {
             return null;
         }
         while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
-            //String fieldName = jsonParser.getCurrentName();
-            //jsonParser.nextToken();
             Checkpoint checkpoint = parseCheckpoint(jsonParser);
             checkpoints.put(checkpoint.getId(), checkpoint);
             jsonParser.skipChildren();
@@ -113,35 +113,40 @@ public class QuestGraphConverter extends StringBasedTypeConverter<QuestGraph> {
         return checkpoints;
     }
 
-    private Checkpoint parseCheckpoint(JsonParser jsonParser) throws IOException {
+    private Checkpoint parseCheckpoint(JsonParser parser) throws IOException {
 
         Checkpoint checkpoint = new Checkpoint();
 
-        if (jsonParser.getCurrentToken() == null) {
-            jsonParser.nextToken();
+        if (parser.getCurrentToken() == null) {
+            parser.nextToken();
         }
-        if (jsonParser.getCurrentToken() != JsonToken.START_OBJECT) {
-            jsonParser.skipChildren();
+        if (parser.getCurrentToken() != JsonToken.START_OBJECT) {
+            parser.skipChildren();
             return null;
         }
-        while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
-            String fieldName = jsonParser.getCurrentName();
-            jsonParser.nextToken();
+        while (parser.nextToken() != JsonToken.END_OBJECT) {
+            String fieldName = parser.getCurrentName();
+            parser.nextToken();
             switch (fieldName) {
                 case "id":
-                    checkpoint.setId(jsonParser.getValueAsLong());
+                    checkpoint.setId(parser.getValueAsLong());
                     break;
                 case "name":
-                    checkpoint.setName(jsonParser.getValueAsString());
+                    checkpoint.setName(parser.getValueAsString());
                     break;
                 case "html":
-                    checkpoint.setViewHtmlFileName(jsonParser.getValueAsString());
+                    checkpoint.setViewHtmlFileName(parser.getValueAsString());
                     break;
                 case "script":
-                    checkpoint.setEventsScriptFileName(jsonParser.getValueAsString());
+                    checkpoint.setEventsScriptFileName(parser.getValueAsString());
                     break;
+                case CircularArea.CIRCLE_FIELD_NAME:
+                    checkpoint.setArea(new CircularAreaConverter().parseJson(parser));
+                    break;
+                case RectangularArea.RECTANGLE_FIELD_NAME:
+                    checkpoint.setArea(new RectangularAreaConverter().parseJson(parser));
             }
-            jsonParser.skipChildren();
+            parser.skipChildren();
         }
         return checkpoint;
     }
@@ -158,6 +163,13 @@ public class QuestGraphConverter extends StringBasedTypeConverter<QuestGraph> {
             jsonGenerator.writeStringField("name", checkpoint.getName());
             jsonGenerator.writeStringField("html", checkpoint.getViewHtmlFileName());
             jsonGenerator.writeStringField("script", checkpoint.getEventsScriptFileName());
+            if(checkpoint.getArea() instanceof CircularArea){
+                new CircularAreaConverter().convert(checkpoint.getArea(), jsonGenerator);
+            }
+            if(checkpoint.getArea() instanceof RectangularArea){
+                new RectangularAreaConverter().convert(checkpoint.getArea(), jsonGenerator);
+            }
+
             jsonGenerator.writeEndObject();
         }
         jsonGenerator.writeEndArray();

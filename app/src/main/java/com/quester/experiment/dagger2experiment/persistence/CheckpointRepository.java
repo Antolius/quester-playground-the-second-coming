@@ -4,9 +4,11 @@ import android.content.ContentValues;
 
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
 import com.quester.experiment.dagger2experiment.persistence.wrapper.Database;
-import com.quester.experiment.dagger2experiment.persistence.wrapper.Rows;
+import com.quester.experiment.dagger2experiment.persistence.wrapper.Row;
 
-public class CheckpointRepository implements DatabaseRepository<Checkpoint>{
+import java.util.List;
+
+public class CheckpointRepository implements DatabaseRepository<Checkpoint> {
 
     private Database database;
 
@@ -31,27 +33,29 @@ public class CheckpointRepository implements DatabaseRepository<Checkpoint>{
     }
 
     @Override
-    public Checkpoint find(long id) {
+    public Checkpoint findOne(long id) {
 
         String[] columns = {"id"
-                ,"name"
-                ,"root"
-                ,"viewHtmlFileName"
-                ,"eventsScriptFileName"
+                , "name"
+                , "root"
+                , "viewHtmlFileName"
+                , "eventsScriptFileName"
         };
         String[] selectionValues = {String.valueOf(id)};
 
-        Rows cursor = database.query("checkpoints", columns, "id=?", selectionValues);
+        List<Row> rows = database.query("checkpoints", columns, "id=?", selectionValues);
 
-        if (!cursor.moveToFirst()) {
+        if (rows.isEmpty()) {
             return null;
         }
+
+        Row row = rows.get(0);
         Checkpoint element = new Checkpoint();
 
-        element.setName(java.lang.String.valueOf(cursor.getString("name")));
-        element.setRoot(java.lang.Boolean.valueOf(cursor.getString("root")));
-        element.setViewHtmlFileName(java.lang.String.valueOf(cursor.getString("viewHtmlFileName")));
-        element.setEventsScriptFileName(java.lang.String.valueOf(cursor.getString("eventsScriptFileName")));
+        element.setName(row.getString("name"));
+        element.setRoot(row.getBoolean("root"));
+        element.setViewHtmlFileName(row.getString("viewHtmlFileName"));
+        element.setEventsScriptFileName(row.getString("eventsScriptFileName"));
 
         return element;
     }
@@ -69,14 +73,14 @@ public class CheckpointRepository implements DatabaseRepository<Checkpoint>{
         String[] columns = {"id"};
         String[] selectionValues = {String.valueOf(id)};
 
-        Rows result = database.query("checkpoints", columns, "id=?", selectionValues);
+        List<Row> result = database.query("checkpoints", columns, "id=?", selectionValues);
 
-        return result.moveToFirst();
+        return !result.isEmpty();
     }
 
-    private long insertOrUpdate(long id, ContentValues values, String tableName){
+    private long insertOrUpdate(long id, ContentValues values, String tableName) {
 
-        if(exists(id)){
+        if (exists(id)) {
             return database.update(tableName, values, "id=?", new String[]{String.valueOf(id)});
         }
         return database.insert(tableName, values);

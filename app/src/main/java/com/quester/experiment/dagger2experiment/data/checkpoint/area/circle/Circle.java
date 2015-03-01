@@ -1,4 +1,6 @@
-package com.quester.experiment.dagger2experiment.data.area;
+package com.quester.experiment.dagger2experiment.data.checkpoint.area.circle;
+
+import com.quester.experiment.dagger2experiment.data.checkpoint.area.Point;
 
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;

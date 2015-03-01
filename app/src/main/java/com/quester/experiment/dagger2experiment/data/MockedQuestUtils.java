@@ -2,9 +2,9 @@ package com.quester.experiment.dagger2experiment.data;
 
 import android.content.Context;
 
-import com.quester.experiment.dagger2experiment.data.area.Circle;
-import com.quester.experiment.dagger2experiment.data.area.CircularArea;
-import com.quester.experiment.dagger2experiment.data.area.Point;
+import com.quester.experiment.dagger2experiment.data.checkpoint.area.circle.Circle;
+import com.quester.experiment.dagger2experiment.data.checkpoint.area.circle.CircularArea;
+import com.quester.experiment.dagger2experiment.data.checkpoint.area.Point;
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
 import com.quester.experiment.dagger2experiment.data.quest.QuestGraph;
@@ -92,7 +92,7 @@ public class MockedQuestUtils {
 
     public static CircularArea mockArea(long id, double latitude, double longitude, double radius) {
         Circle circle = new Circle(new Point(latitude, longitude), radius);
-        return new CircularArea(circle, id);
+        return new CircularArea(circle);
     }
 
     public static void createFilesForCheckpoints(Collection<Checkpoint> checkpoints, Context context) {

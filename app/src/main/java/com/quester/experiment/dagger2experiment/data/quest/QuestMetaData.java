@@ -18,8 +18,13 @@ public class QuestMetaData {
     @JsonField
     private long version;
 
-    @ParcelConstructor
     public QuestMetaData() {
+    }
+
+    @ParcelConstructor
+    public QuestMetaData(long originalId, long version) {
+        this.originalId = originalId;
+        this.version = version;
     }
 
     public long getOriginalId() {

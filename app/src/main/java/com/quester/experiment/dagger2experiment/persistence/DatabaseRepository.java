@@ -4,7 +4,7 @@ public interface DatabaseRepository<T> {
 
     T save(T element);
 
-    T find(long id);
+    T findOne(long id);
 
     void delete(long id);
 

@@ -37,7 +37,7 @@ public class GeofencesTracker implements GoogleApiClient.ConnectionCallbacks, Go
                 .addOnConnectionFailedListener(this)
                 .build();
 
-        Logger.v(TAG, "built new GoogleApiClient");
+        Logger.verbose(TAG, "built new GoogleApiClient");
     }
 
     public void trackCheckpoints(Collection<Checkpoint> newTrackingCheckpoints) {
@@ -46,12 +46,12 @@ public class GeofencesTracker implements GoogleApiClient.ConnectionCallbacks, Go
         }
         trackingCheckpoints = newTrackingCheckpoints;
 
-        Logger.d(TAG, "registered geofences for checkpoints=%s", trackingCheckpoints);
+        Logger.debug(TAG, "registered geofences for checkpoints=%s", trackingCheckpoints);
     }
 
     public void start() {
         if (!apiClient.isConnected()) {
-            Logger.v(TAG, "connecting GoogleApiClient...");
+            Logger.verbose(TAG, "connecting GoogleApiClient...");
 
             apiClient.connect();
         }
@@ -59,7 +59,7 @@ public class GeofencesTracker implements GoogleApiClient.ConnectionCallbacks, Go
 
     public void stop() {
         if (apiClient.isConnected()) {
-            Logger.v(TAG, "removing geofences and disconnecting GoogleApiClient...");
+            Logger.verbose(TAG, "removing geofences and disconnecting GoogleApiClient...");
 
             GeofenceApiUtils.removeGeofencesForCheckpoints(apiClient, trackingCheckpoints);
             apiClient.disconnect();
@@ -68,19 +68,19 @@ public class GeofencesTracker implements GoogleApiClient.ConnectionCallbacks, Go
 
     @Override
     public void onConnected(Bundle bundle) {
-        Logger.v(TAG, "GoogleApiClient connected, adding geofences");
+        Logger.verbose(TAG, "GoogleApiClient connected, adding geofences");
 
         GeofenceApiUtils.addGeofencesForCheckpoints(context, apiClient, trackingCheckpoints);
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        Logger.w(TAG, "GoogleApiClients connection suspended");
+        Logger.warning(TAG, "GoogleApiClients connection suspended");
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Logger.e(TAG, "GoogleApiClients connection failed with errorCode=%d", connectionResult.getErrorCode());
+        Logger.error(TAG, "GoogleApiClients connection failed with errorCode=%debug", connectionResult.getErrorCode());
     }
 
     public Checkpoint getTrackingCheckpointById(long checkpointId) {

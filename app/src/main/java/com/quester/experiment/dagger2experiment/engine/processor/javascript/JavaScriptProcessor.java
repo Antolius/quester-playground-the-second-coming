@@ -34,7 +34,7 @@ public class JavaScriptProcessor implements Processor {
 
     @Override
     public boolean isCheckpointVisitable(Checkpoint reachedCheckpoint) {
-        Logger.d(TAG, "isCheckpointVisitable called with %s", reachedCheckpoint.toString());
+        Logger.debug(TAG, "isCheckpointVisitable called with %s", reachedCheckpoint.toString());
         if (javaScriptLoader.isJavaScriptFile(reachedCheckpoint.getEventsScriptFileName())) {
             return processCheckpoint(reachedCheckpoint);
         }
@@ -76,14 +76,14 @@ public class JavaScriptProcessor implements Processor {
     private String executeScript(String script, Context context, Scriptable executionScope) {
         Object result = context.evaluateString(executionScope, script, "checkpointScript", 1, null);
         String response = Context.toString(result);
-        Logger.v(TAG, "executed script and returned %s", response);
+        Logger.verbose(TAG, "executed script and returned %s", response);
         return response;
     }
 
     private void extractAndSavePersistentGameObject(Scriptable executionScope) {
         Scriptable pgoScriptable = (Scriptable) executionScope.get(PERSISTENT_GAME_OBJECT, executionScope);
         String pgoString = getStringFromScriptable(pgoScriptable, sharedScope);
-        Logger.v(TAG, "persistentGameObject after script execution: %s", pgoString);
+        Logger.verbose(TAG, "persistentGameObject after script execution: %s", pgoString);
         gameStateProvider.getGameState().setPersistentGameObject(pgoString);
     }
 

@@ -16,7 +16,7 @@ public class GameStateProvider {
     private long questId;
 
     public void initiate(Quest quest) {
-        Logger.v(TAG, "initiated with quest %s, id=%d", quest.getName(), quest.getId());
+        Logger.verbose(TAG, "initiated with quest %s, id=%debug", quest.getName(), quest.getId());
 
         gameState = new GameState(quest.getQuestGraph(), "{}");
 
@@ -29,7 +29,7 @@ public class GameStateProvider {
     }
 
     public boolean saveGameState() {
-        Logger.v(TAG, "saved game state for quest id=%d", questId);
+        Logger.verbose(TAG, "saved game state for quest id=%debug", questId);
         //TODO: implement
 
         return true;

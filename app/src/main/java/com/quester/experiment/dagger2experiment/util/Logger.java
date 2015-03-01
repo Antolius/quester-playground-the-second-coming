@@ -13,7 +13,7 @@ public class Logger {
 
     public static final String TAG = "Logger";
 
-    public static void v(String tag, String message, Object... parameters) {
+    public static void verbose(String tag, String message, Object... parameters) {
         if (BuildConfig.DEBUG) {
             try {
                 Log.v(tag, String.format(message, parameters));
@@ -25,7 +25,7 @@ public class Logger {
         }
     }
 
-    public static void i(String tag, String message, Object... parameters) {
+    public static void info(String tag, String message, Object... parameters) {
         if (BuildConfig.DEBUG) {
             try {
                 Log.i(tag, String.format(message, parameters));
@@ -37,7 +37,7 @@ public class Logger {
         }
     }
 
-    public static void d(String tag, String message, Object... parameters) {
+    public static void debug(String tag, String message, Object... parameters) {
         try {
             Log.d(tag, String.format(message, parameters));
         } catch (NullPointerException exception) {
@@ -47,7 +47,7 @@ public class Logger {
         }
     }
 
-    public static void w(String tag, String message, Object... parameters) {
+    public static void warning(String tag, String message, Object... parameters) {
         try {
             Log.w(tag, String.format(message, parameters));
         } catch (NullPointerException exception) {
@@ -57,7 +57,7 @@ public class Logger {
         }
     }
 
-    public static void e(String tag, String message, Object... parameters) {
+    public static void error(String tag, String message, Object... parameters) {
         try {
             Log.e(tag, String.format(message, parameters));
         } catch (NullPointerException exception) {

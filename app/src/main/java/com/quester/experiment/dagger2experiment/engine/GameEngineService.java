@@ -1,20 +1,13 @@
 package com.quester.experiment.dagger2experiment.engine;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.support.v4.app.NotificationCompat;
-
-import com.quester.experiment.dagger2experiment.R;
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
-import com.quester.experiment.dagger2experiment.data.quest.QuestGraphUtils;
+import com.quester.experiment.dagger2experiment.engine.notification.Notifier;
 import com.quester.experiment.dagger2experiment.engine.processor.Processor;
 import com.quester.experiment.dagger2experiment.engine.state.GameState;
 import com.quester.experiment.dagger2experiment.engine.state.GameStateProvider;
 import com.quester.experiment.dagger2experiment.engine.trigger.CheckpointReachedListener;
 import com.quester.experiment.dagger2experiment.engine.trigger.Trigger;
-import com.quester.experiment.dagger2experiment.ui.CheckpointReachedActivity;
 import com.quester.experiment.dagger2experiment.util.Logger;
 
 import java.util.Collection;
@@ -22,6 +15,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
+
+import static com.quester.experiment.dagger2experiment.data.quest.QuestGraphUtils.getRootCheckpoints;
 
 
 /**
@@ -42,27 +37,33 @@ public class GameEngineService extends GameService implements CheckpointReachedL
     @Inject
     protected GameStateProvider gameStateProvider;
 
+    private Notifier notifier;
+
     @Override
     public void onCreate() {
-        Logger.v(TAG, "onCreate is called, initiating dependency injection...");
-
+        Logger.verbose(TAG, "onCreate is called, initiating dependency injection...");
         super.onCreate();
 
-        EngineComponent engineComponent = Dagger_EngineComponent.builder()
-                .engineModule(new EngineModule(this))
-                .build();
-        engineComponent.injectGameEngineService(this);
+        notifier = new Notifier(this);
+        buildEngineComponent();
 
         for (Trigger trigger : checkpointReachedTriggers) {
             trigger.setCheckpointReachedListener(this);
         }
 
-        Logger.v(TAG, "Injected dependencies");
+        Logger.verbose(TAG, "Injected dependencies");
+    }
+
+    private void buildEngineComponent() {
+        EngineComponent engineComponent = Dagger_EngineComponent.builder()
+                .engineModule(new EngineModule(this))
+                .build();
+        engineComponent.injectGameEngineService(this);
     }
 
     @Override
     public void onCheckpointReached(Checkpoint reachedCheckpoint) {
-        Logger.d(TAG, "onCheckpointReached called with %s", reachedCheckpoint.toString());
+        Logger.debug(TAG, "onCheckpointReached called with %s", reachedCheckpoint.toString());
 
         for (Processor processor : checkpointVisitabillityProcessors) {
             if (!processor.isCheckpointVisitable(reachedCheckpoint)) {
@@ -72,9 +73,29 @@ public class GameEngineService extends GameService implements CheckpointReachedL
         visitCheckpoint(reachedCheckpoint);
     }
 
+    private void visitCheckpoint(Checkpoint visitedCheckpoint) {
+        Logger.debug(TAG, "visited checkpoint %s", visitedCheckpoint.toString());
+
+        notifier.notifyCheckpointReached(visitedCheckpoint);
+
+        GameState gameState = gameStateProvider.getGameState();
+        gameState.setCheckpointAsVisited(visitedCheckpoint);
+
+        Set<Checkpoint> reachableCheckpoints = gameState.getQuestGraph().getChildren(visitedCheckpoint);
+
+        if (reachableCheckpoints.isEmpty()) {
+            //TODO: finish the game
+            stopGame();
+            return;
+        }
+
+        registerReachableCheckpoints(reachableCheckpoints);
+        gameStateProvider.saveGameState();
+    }
+
     @Override
     protected void stopGame() {
-        Logger.v(TAG, "stopping the current game");
+        Logger.verbose(TAG, "stopping the current game");
 
         for (Trigger trigger : checkpointReachedTriggers) {
             trigger.stop();
@@ -86,7 +107,7 @@ public class GameEngineService extends GameService implements CheckpointReachedL
 
     @Override
     protected void startGame(Quest quest) {
-        Logger.v(TAG, "game starting with quest %s, id=%d", quest.getName(), quest.getId());
+        Logger.verbose(TAG, "game starting with quest %s, id=%debug", quest.getName(), quest.getId());
 
         if (isGameInProgress) {
             stopGame();
@@ -96,7 +117,7 @@ public class GameEngineService extends GameService implements CheckpointReachedL
         for (Trigger trigger : checkpointReachedTriggers) {
             trigger.start();
         }
-        registerReachableCheckpoints(QuestGraphUtils.getRootCheckpoints(quest.getQuestGraph()));
+        registerReachableCheckpoints(getRootCheckpoints(quest.getQuestGraph()));
 
         isGameInProgress = true;
     }
@@ -107,50 +128,4 @@ public class GameEngineService extends GameService implements CheckpointReachedL
         }
     }
 
-    private void visitCheckpoint(Checkpoint visitedCheckpoint) {
-        Logger.d(TAG, "visited checkpoint %s", visitedCheckpoint.toString());
-        sendNotification(visitedCheckpoint);
-
-        GameState gameState = gameStateProvider.getGameState();
-        gameState.setCheckpointAsVisited(visitedCheckpoint);
-
-        Set<Checkpoint> reachableCheckpoints = gameState.getQuestGraph().getChildren(visitedCheckpoint);
-        if (!reachableCheckpoints.isEmpty()) {
-            registerReachableCheckpoints(reachableCheckpoints);
-            gameStateProvider.saveGameState();
-            return;
-        }
-
-        //TODO: finish the game
-        stopGame();
-    }
-
-    //TODO: refactor!
-    private void sendNotification(Checkpoint visitedCheckpoint) {
-        Intent resultIntent = new Intent(this, CheckpointReachedActivity.class);
-
-        PendingIntent resultPendingIntent =
-                PendingIntent.getActivity(
-                        this,
-                        0,
-                        resultIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_launcher)
-                        .setContentTitle("New Checkpoint reached")
-                        .setContentIntent(resultPendingIntent)
-                        .setAutoCancel(true)
-                        .setContentText("Checkpoint id=" + visitedCheckpoint.getId());
-
-        int mNotificationId = (int) visitedCheckpoint.getId();
-// Gets an instance of the NotificationManager service
-        NotificationManager mNotifyMgr =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-// Builds the notification and issues it.
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
-
-    }
 }

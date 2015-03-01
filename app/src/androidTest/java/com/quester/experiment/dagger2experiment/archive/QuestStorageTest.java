@@ -1,103 +1,137 @@
 package com.quester.experiment.dagger2experiment.archive;
 
-import android.os.Environment;
-
+import com.quester.experiment.dagger2experiment.TestUtils;
 import com.sromku.simple.storage.SimpleStorage;
 
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
 public class QuestStorageTest {
 
-    @Test
-    public void test() throws IOException {
+    private QuestStorage storage;
 
-        QuestStorage storage = new QuestStorage(Robolectric.application);
+    private List<QuestPackage> packageList;
+    private String jsonScroll;
 
-        SimpleStorage.getExternalStorage().createFile("", "123_test.qst", "");
-        List<QuestPackage> packageList = storage.findQuestPackages();
-
-        assertEquals(1, packageList.size());
-        assertEquals(Long.valueOf(123), packageList.get(0).getId());
-        assertEquals("test", packageList.get(0).getName());
-
-        SimpleStorage.getExternalStorage().deleteFile("", "123_test.qst");
+    @Before
+    public void setUp() {
+        storage = new QuestStorage(Robolectric.application);
     }
 
     @Test
-    public void test2() throws IOException {
+    public void questPackagesAreRetrievedCorrectly() throws IOException {
 
-        QuestStorage storage = new QuestStorage(Robolectric.application);
+        givenPackageFromAssets("123_test.qst");
 
-        SimpleStorage.getExternalStorage().createFile("", "123_test.qst",
-                read(Robolectric.getShadowApplication().getAssets().open("123_test.qst")));
-        List<QuestPackage> packageList = storage.findQuestPackages();
+        whenFindQuestPackages();
 
-        String json = storage.storePackageAndRetrieveScroll(packageList.get(0));
+        thenFoundPackages(1);
+        thenFirstPackageEquals(new QuestPackage(123L, "test", null));
+    }
 
-        SimpleStorage.getExternalStorage().deleteFile("", "123_test.qst");
+    @Test
+    public void questIsUnpackedToInternalStorage() throws IOException {
 
-        assertEquals("{\"name\":\"test\"," +
+        givenPackageFromAssets("123_test.qst");
+
+        whenStorePackage();
+
+        thenFolderExistsInInternalStorage("123_test");
+    }
+
+    //simple storage fails to delete folder
+    @Ignore
+    @Test
+    public void questIsDeletedFromInternalStorage() throws IOException {
+
+        givenPackageInInternalStorage("123_test.qst");
+
+        whenRemoveQuest(123L, "test");
+
+        thenFolderNotExistsInInternalStorage("123_test");
+    }
+
+    @Test
+    public void questScrollIsCorrectlyExtracted() throws IOException {
+
+        givenPackageFromAssets("123_test.qst");
+
+        whenExtractQuestScroll();
+
+        thenQuestScrollIs("{\"name\":\"test\"," +
                 "\"questGraph\":{" +
                 "\"checkpoints\":[" +
                 "{\"id\":0,\"name\":\"Checkpoint #0\",\"html\":\"mockedView\",\"script\":\"mockedScript\"}," +
                 "{\"id\":1,\"name\":\"Checkpoint #1\",\"html\":\"mockedView\",\"script\":\"mockedScript\"}]," +
                 "\"links\":{\"0\":[1],\"1\":[]}}," +
                 "\"id\":1," +
-                "\"questMetaData\":{\"originalId\":0,\"version\":0}}", json);
+                "\"questMetaData\":{\"originalId\":123,\"version\":0}}");
     }
 
-    @Test
-    public void test3() throws IOException {
-
-        QuestStorage storage = new QuestStorage(Robolectric.application);
-
-        //TODO fix get from assets folder
-        SimpleStorage.getExternalStorage().createFile("", "123_test.qst",
-                read(Robolectric.getShadowApplication().getAssets().open("123_test.qst")));
-        List<QuestPackage> packageList = storage.findQuestPackages();
-
-        String json = storage.retrieveScroll(packageList.get(0));
-
-        SimpleStorage.getExternalStorage().deleteFile("", "123_test.qst");
-
-        assertEquals("{\"name\":\"test\"," +
-                "\"questGraph\":{" +
-                "\"checkpoints\":[" +
-                "{\"id\":0,\"name\":\"Checkpoint #0\",\"html\":\"mockedView\",\"script\":\"mockedScript\"}," +
-                "{\"id\":1,\"name\":\"Checkpoint #1\",\"html\":\"mockedView\",\"script\":\"mockedScript\"}]," +
-                "\"links\":{\"0\":[1],\"1\":[]}}," +
-                "\"id\":1," +
-                "\"questMetaData\":{\"originalId\":0,\"version\":0}}", json);
+    private void givenPackageFromAssets(String name) throws IOException {
+        TestUtils.moveQuestPackageFromAssetsToExternalStorage(name);
     }
 
-    public byte[] read(InputStream stream) throws IOException {
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-        int nRead;
-        byte[] data = new byte[16384];
-
-        while ((nRead = stream.read(data, 0, data.length)) != -1) {
-            buffer.write(data, 0, nRead);
-        }
-
-        buffer.flush();
-
-        return buffer.toByteArray();
+    private void givenPackageInInternalStorage(String name) throws IOException {
+        TestUtils.moveQuestPackageFromAssetsToExternalStorage(name);
+        packageList = storage.findQuestPackages();
+        storage.storePackage(packageList.get(0));
     }
+
+    private void whenFindQuestPackages(){
+        packageList = storage.findQuestPackages();
+    }
+
+    private void whenStorePackage(){
+        packageList = storage.findQuestPackages();
+        storage.storePackage(packageList.get(0));
+    }
+
+    private void whenExtractQuestScroll(){
+        packageList = storage.findQuestPackages();
+        jsonScroll = storage.extractQuestScroll(packageList.get(0));
+    }
+
+    private void whenRemoveQuest(long id, String questName) {
+        storage.removeQuest(new QuestPackage(id, questName, null));
+    }
+
+    private void thenFoundPackages(int numberOfQuestPackages){
+
+        assertEquals(numberOfQuestPackages, packageList.size());
+    }
+
+    private void thenFirstPackageEquals(QuestPackage questPackage){
+
+        assertEquals(questPackage.getName(), packageList.get(0).getName());
+        assertEquals(questPackage.getId(), packageList.get(0).getId());
+    }
+
+    private void thenQuestScrollIs(String questJson){
+
+        assertEquals(jsonScroll, questJson);
+    }
+
+    private void thenFolderExistsInInternalStorage(String questFolder) {
+        assertTrue(SimpleStorage.getInternalStorage(Robolectric.application).isDirectoryExists("Quests/" + questFolder));
+    }
+
+    private void thenFolderNotExistsInInternalStorage(String questFolder) {
+        assertFalse(SimpleStorage.getInternalStorage(Robolectric.application).isDirectoryExists("Quests/"+questFolder));
+    }
+
 }

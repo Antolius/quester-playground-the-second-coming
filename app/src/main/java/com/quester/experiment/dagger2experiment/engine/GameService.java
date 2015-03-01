@@ -25,7 +25,7 @@ public abstract class GameService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Logger.v(TAG, "onStartCommand called");
+        Logger.verbose(TAG, "onStartCommand called");
 
         startGame(extractQuestFromIntent(intent));
         return super.onStartCommand(intent, flags, startId);
@@ -33,7 +33,7 @@ public abstract class GameService extends Service {
 
     @Override
     public void onDestroy() {
-        Logger.v(TAG, "onDestroy called");
+        Logger.verbose(TAG, "onDestroy called");
 
         stopGame();
         super.onDestroy();

@@ -45,6 +45,10 @@
         <activity
             android:name=".ui.StorageTestActivity"
             android:label="@string/title_activity_storage_test" >
+        </activity>
+        <activity
+            android:name=".ui.WebViewExampleActivity"
+            android:label="@string/title_activity_web_view_example" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

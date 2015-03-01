@@ -1,7 +1,6 @@
 package com.quester.experiment.dagger2experiment.archive;
 
 import android.content.Context;
-import android.os.Environment;
 
 import com.sromku.simple.storage.SimpleStorage;
 import com.sromku.simple.storage.Storage;
@@ -56,14 +55,28 @@ public class QuestStorage {
         return result;
     }
 
-    public String storePackageAndRetrieveScroll(QuestPackage questPackage) {
+    public void storePackage(QuestPackage questPackage){
 
         unpack(questPackage, internalStorage);
+    }
+
+    /**
+     * retrieves content of quest.json file inside the quest package in internal storage
+     * @param questPackage quest package descriptor
+     * @return json from quest.json field inside the package
+     */
+    public String getQuestScroll(QuestPackage questPackage) {
 
         return getQuestScroll(questPackage, internalStorage);
     }
 
-    public String retrieveScroll(QuestPackage questPackage) {
+    /**
+     * unpacks questPackage temporarily to Quests directory in external storage
+     * to read the content of quest.json
+     * @param questPackage quest package descriptor
+     * @return json from quest.json field inside the package
+     */
+    public String extractQuestScroll(QuestPackage questPackage) {
 
         unpack(questPackage, externalStorage);
 
@@ -85,6 +98,10 @@ public class QuestStorage {
         return storage.readTextFile("Quests/" + questPackage.getDirectoryName(), "quest.json");
     }
 
+    /**
+     * quest folder and sub data are removed
+     * @param questPackage should be changed to simpler
+     */
     public void removeQuest(QuestPackage questPackage) {
 
         internalStorage.deleteDirectory("Quests/" + questPackage.getDirectoryName());

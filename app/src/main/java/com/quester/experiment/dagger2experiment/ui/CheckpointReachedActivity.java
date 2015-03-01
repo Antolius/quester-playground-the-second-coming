@@ -44,7 +44,7 @@ public class CheckpointReachedActivity extends InjectionActivity {
         setContentView(R.layout.activity_checkpoint_reached);
         ButterKnife.inject(this);
 
-        Logger.v(TAG, "injected dependencies");
+        Logger.verbose(TAG, "injected dependencies");
 
         renderCurrentCheckpoint();
     }
