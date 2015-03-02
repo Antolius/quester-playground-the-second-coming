@@ -2,7 +2,7 @@ package com.quester.experiment.dagger2experiment.engine.processor.javascript;
 
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
 import com.quester.experiment.dagger2experiment.engine.processor.Processor;
-import com.quester.experiment.dagger2experiment.engine.state.GameStateProvider;
+import com.quester.experiment.dagger2experiment.engine.provider.GameStateProvider;
 import com.quester.experiment.dagger2experiment.util.Logger;
 
 import org.mozilla.javascript.Context;

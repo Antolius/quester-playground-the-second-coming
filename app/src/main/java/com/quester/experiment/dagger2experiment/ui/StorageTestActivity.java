@@ -13,7 +13,7 @@ import com.quester.experiment.dagger2experiment.archive.QuestArchiver;
 import com.quester.experiment.dagger2experiment.archive.QuestPackage;
 import com.quester.experiment.dagger2experiment.archive.QuestStorage;
 import com.quester.experiment.dagger2experiment.archive.cryptographer.QuestCryptographer;
-import com.quester.experiment.dagger2experiment.persistence.QuestRepository;
+import com.quester.experiment.dagger2experiment.persistence.quest.QuestRepository;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -2,7 +2,7 @@ package com.quester.experiment.dagger2experiment.archive;
 
 import com.quester.experiment.dagger2experiment.archive.cryptographer.QuestCryptographer;
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
-import com.quester.experiment.dagger2experiment.persistence.QuestRepository;
+import com.quester.experiment.dagger2experiment.persistence.quest.QuestRepository;
 
 import java.util.List;
 

@@ -1,10 +1,11 @@
-package com.quester.experiment.dagger2experiment.persistence;
+package com.quester.experiment.dagger2experiment.persistence.quest;
 
 import android.content.ContentValues;
 
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
-import com.quester.experiment.dagger2experiment.persistence.wrapper.Database;
-import com.quester.experiment.dagger2experiment.persistence.wrapper.Row;
+import com.quester.experiment.dagger2experiment.persistence.DatabaseRepository;
+import com.quester.experiment.dagger2experiment.persistence.wrapper.sql.Database;
+import com.quester.experiment.dagger2experiment.persistence.wrapper.sql.Row;
 
 import java.util.List;
 

@@ -1,10 +1,12 @@
 package com.quester.experiment.dagger2experiment.persistence.module;
 
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.quester.experiment.dagger2experiment.InjectionApplication;
-import com.quester.experiment.dagger2experiment.persistence.QuestRepository;
-import com.quester.experiment.dagger2experiment.persistence.wrapper.Database;
+import com.quester.experiment.dagger2experiment.persistence.game.GameStateRepository;
+import com.quester.experiment.dagger2experiment.persistence.quest.QuestRepository;
+import com.quester.experiment.dagger2experiment.persistence.wrapper.sql.Database;
 
 import org.flywaydb.core.Flyway;
 
@@ -16,11 +18,13 @@ import dagger.Provides;
 @Module
 public class DatabaseModule {
 
-    private final Database database;
+    private Database database;
+    private Context context;
 
-    public DatabaseModule(InjectionApplication application) {
+    public DatabaseModule(Context context) {
 
-        SQLiteDatabase sqLiteDatabase = application.openOrCreateDatabase("test", 0, null);
+        this.context = context;
+        SQLiteDatabase sqLiteDatabase = context.openOrCreateDatabase("test", 0, null);
 
         //should enable in production or move somewhere
         //migrate(sqLiteDatabase);
@@ -38,5 +42,11 @@ public class DatabaseModule {
     @Singleton
     public QuestRepository provideQuestRepository() {
         return new QuestRepository(database);
+    }
+
+    @Provides
+    @Singleton
+    public GameStateRepository provideGameStateRepository() {
+        return new GameStateRepository(context);
     }
 }

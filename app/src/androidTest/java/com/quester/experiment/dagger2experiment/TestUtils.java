@@ -2,7 +2,7 @@ package com.quester.experiment.dagger2experiment;
 
 import android.database.sqlite.SQLiteDatabase;
 
-import com.quester.experiment.dagger2experiment.persistence.wrapper.Database;
+import com.quester.experiment.dagger2experiment.persistence.wrapper.sql.Database;
 import com.sromku.simple.storage.SimpleStorage;
 
 import org.robolectric.Robolectric;

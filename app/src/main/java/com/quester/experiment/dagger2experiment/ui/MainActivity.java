@@ -10,13 +10,12 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.quester.experiment.dagger2experiment.ActivityInjectionComponent;
-import com.quester.experiment.dagger2experiment.BuildConfig;
 import com.quester.experiment.dagger2experiment.InjectionActivity;
 import com.quester.experiment.dagger2experiment.R;
 import com.quester.experiment.dagger2experiment.data.MockedQuestUtils;
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
 import com.quester.experiment.dagger2experiment.engine.GameEngineService;
-import com.quester.experiment.dagger2experiment.persistence.QuestRepository;
+import com.quester.experiment.dagger2experiment.persistence.quest.QuestRepository;
 import com.quester.experiment.dagger2experiment.engine.GameService;
 
 import org.parceler.Parcels;

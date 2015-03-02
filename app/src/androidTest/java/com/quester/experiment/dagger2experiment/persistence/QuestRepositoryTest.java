@@ -4,6 +4,7 @@ import com.quester.experiment.dagger2experiment.TestUtils;
 import com.quester.experiment.dagger2experiment.data.MockedQuestUtils;
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
 import com.quester.experiment.dagger2experiment.data.quest.QuestMetaData;
+import com.quester.experiment.dagger2experiment.persistence.quest.QuestRepository;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package com.quester.experiment.dagger2experiment.engine.state;
+package com.quester.experiment.dagger2experiment.data.game;
 
 import org.json.JSONException;
 import org.json.JSONObject;

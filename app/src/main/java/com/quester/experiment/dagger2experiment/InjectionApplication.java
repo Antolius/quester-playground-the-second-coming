@@ -3,6 +3,8 @@ package com.quester.experiment.dagger2experiment;
 import android.app.Application;
 import android.util.Log;
 
+import com.quester.experiment.dagger2experiment.archive.ArchiverModule;
+import com.quester.experiment.dagger2experiment.engine.provider.GameStateModule;
 import com.quester.experiment.dagger2experiment.persistence.module.DatabaseModule;
 
 /**
@@ -29,8 +31,11 @@ public class InjectionApplication extends Application {
 
         activityInjectionComponent = Dagger_ActivityInjectionComponent.builder()
                 .applicationModule(new ApplicationModule(this))
+                .archiverModule(new ArchiverModule(this))
                 .databaseModule(new DatabaseModule(this))
+                .gameStateModule(new GameStateModule(this))
                 .build();
+
 
         Log.d(TAG, "built " + activityInjectionComponent.getClass().getSimpleName());
 

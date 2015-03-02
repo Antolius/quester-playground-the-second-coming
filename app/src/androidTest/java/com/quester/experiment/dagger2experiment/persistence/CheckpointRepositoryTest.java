@@ -2,6 +2,7 @@ package com.quester.experiment.dagger2experiment.persistence;
 
 import com.quester.experiment.dagger2experiment.TestUtils;
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
+import com.quester.experiment.dagger2experiment.persistence.quest.CheckpointRepository;
 
 import org.junit.Before;
 import org.junit.Test;

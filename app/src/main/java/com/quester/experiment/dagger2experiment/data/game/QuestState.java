@@ -1,4 +1,4 @@
-package com.quester.experiment.dagger2experiment.engine.state;
+package com.quester.experiment.dagger2experiment.data.game;
 
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
 import com.quester.experiment.dagger2experiment.data.quest.QuestGraph;
@@ -10,10 +10,12 @@ import java.util.LinkedList;
  */
 public class QuestState {
 
+    private final long questId;
     private final QuestGraph questGraph;
     private final LinkedList<Checkpoint> visitedCheckpoints = new LinkedList<>();
 
-    public QuestState(QuestGraph questGraph) {
+    public QuestState(long questId, QuestGraph questGraph) {
+        this.questId = questId;
         this.questGraph = questGraph;
     }
 
@@ -33,7 +35,11 @@ public class QuestState {
         return visitedCheckpoints.peekLast();
     }
 
-    LinkedList<Checkpoint> getVisitedCheckpoints() {
+    public LinkedList<Checkpoint> getVisitedCheckpoints() {
         return visitedCheckpoints;
+    }
+
+    public long getQuestId() {
+        return questId;
     }
 }

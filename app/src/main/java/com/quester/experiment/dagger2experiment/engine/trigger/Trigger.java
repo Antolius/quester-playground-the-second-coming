@@ -11,10 +11,10 @@ public interface Trigger {
 
     public void setCheckpointReachedListener(CheckpointReachedListener callback);
 
-    public abstract void start();
+    public void start();
 
-    public abstract void stop();
+    public void stop();
 
-    abstract public void registerReachableCheckpoints(Collection<Checkpoint> reachableCheckpoints);
+    public void registerReachableCheckpoints(Collection<Checkpoint> reachableCheckpoints);
 
 }

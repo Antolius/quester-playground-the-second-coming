@@ -1,4 +1,4 @@
-package com.quester.experiment.dagger2experiment.persistence.wrapper;
+package com.quester.experiment.dagger2experiment.persistence.wrapper.sql;
 
 import android.database.Cursor;
 

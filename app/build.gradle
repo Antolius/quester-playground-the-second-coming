@@ -1,13 +1,13 @@
 buildscript {
     repositories {
         mavenCentral()
+        maven {
+            url "http://files.couchbase.com/maven2/"
+        }
     }
     dependencies {
-        // replace with the current version of the Android plugin
         classpath 'com.android.tools.build:gradle:1.0.0'
-        // the latest version of the android-apt plugin
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
-        //the latest version of th robolectric plugin
         classpath 'org.robolectric:robolectric-gradle-plugin:0.13.+'
     }
 }
@@ -42,7 +42,12 @@ robolectric {
 
 repositories {
     mavenCentral()
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
+    maven {
+        url "http://files.couchbase.com/maven2/"
+    }
 }
 
 dependencies {

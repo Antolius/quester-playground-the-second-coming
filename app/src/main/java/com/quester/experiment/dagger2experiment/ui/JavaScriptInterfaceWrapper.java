@@ -2,7 +2,7 @@ package com.quester.experiment.dagger2experiment.ui;
 
 import android.webkit.JavascriptInterface;
 
-import com.quester.experiment.dagger2experiment.engine.state.GameState;
+import com.quester.experiment.dagger2experiment.data.game.GameState;
 
 /**
  * Created by Josip on 25/01/2015!

@@ -1,13 +1,16 @@
 package com.quester.experiment.dagger2experiment.engine;
 
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
+import com.quester.experiment.dagger2experiment.data.game.GameState;
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
 import com.quester.experiment.dagger2experiment.engine.notification.Notifier;
+import com.quester.experiment.dagger2experiment.engine.notification.NotifierModule;
 import com.quester.experiment.dagger2experiment.engine.processor.Processor;
-import com.quester.experiment.dagger2experiment.engine.state.GameState;
-import com.quester.experiment.dagger2experiment.engine.state.GameStateProvider;
+import com.quester.experiment.dagger2experiment.engine.provider.GameStateModule;
 import com.quester.experiment.dagger2experiment.engine.trigger.CheckpointReachedListener;
 import com.quester.experiment.dagger2experiment.engine.trigger.Trigger;
+import com.quester.experiment.dagger2experiment.engine.provider.GameStateProvider;
+import com.quester.experiment.dagger2experiment.persistence.module.DatabaseModule;
 import com.quester.experiment.dagger2experiment.util.Logger;
 
 import java.util.Collection;
@@ -37,19 +40,15 @@ public class GameEngineService extends GameService implements CheckpointReachedL
     @Inject
     protected GameStateProvider gameStateProvider;
 
-    private Notifier notifier;
+    @Inject
+    protected Notifier notifier;
 
     @Override
     public void onCreate() {
         Logger.verbose(TAG, "onCreate is called, initiating dependency injection...");
         super.onCreate();
 
-        notifier = new Notifier(this);
         buildEngineComponent();
-
-        for (Trigger trigger : checkpointReachedTriggers) {
-            trigger.setCheckpointReachedListener(this);
-        }
 
         Logger.verbose(TAG, "Injected dependencies");
     }
@@ -57,6 +56,8 @@ public class GameEngineService extends GameService implements CheckpointReachedL
     private void buildEngineComponent() {
         EngineComponent engineComponent = Dagger_EngineComponent.builder()
                 .engineModule(new EngineModule(this))
+                .notifierModule(new NotifierModule(this))
+                .gameStateModule(new GameStateModule(this))
                 .build();
         engineComponent.injectGameEngineService(this);
     }
@@ -115,8 +116,10 @@ public class GameEngineService extends GameService implements CheckpointReachedL
 
         gameStateProvider.initiate(quest);
         for (Trigger trigger : checkpointReachedTriggers) {
+            trigger.setCheckpointReachedListener(this);
             trigger.start();
         }
+
         registerReachableCheckpoints(getRootCheckpoints(quest.getQuestGraph()));
 
         isGameInProgress = true;
