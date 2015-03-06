@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
+import com.quester.experiment.dagger2experiment.util.Logger;
 import com.sromku.simple.storage.SimpleStorage;
 import com.sromku.simple.storage.Storage;
 import com.sromku.simple.storage.helpers.OrderType;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QuestStorage {
+
+    private static final Logger logger = Logger.instance(QuestStorage.class);
 
     private Storage externalStorage;
     private Storage internalStorage;
@@ -65,10 +68,11 @@ public class QuestStorage {
      * saves a representation of a *.qst file
      * by unpacking it to internal storage
      * @param questPackage a representation od a *.qst file
+     * @return true if the storing succeeded false otherwise
      */
-    public void storePackage(QuestPackage questPackage) {
+    public boolean storePackage(QuestPackage questPackage) {
 
-        unpack(questPackage, internalStorage);
+        return unpack(questPackage, internalStorage);
     }
 
     /**
@@ -136,18 +140,22 @@ public class QuestStorage {
      */
     public String extractQuestJson(QuestPackage questPackage) {
 
-        unpack(questPackage, externalStorage);
+        if(!unpack(questPackage, externalStorage)){
+            return null;
+        }
 
         String questJson = getQuestJson(questPackage, externalStorage);
         externalStorage.deleteDirectory("Quests/" + questPackage.getDirectoryName());
         return questJson;
     }
 
-    private void unpack(QuestPackage questPackage, Storage storage) {
+    private boolean unpack(QuestPackage questPackage, Storage storage) {
         try {
             new ZipFile(questPackage.getFile()).extractAll(storage.getFile("Quests").getPath());
+            return true;
         } catch (ZipException e) {
-            e.printStackTrace();
+            logger.error("Failed to unpack quest package" + questPackage);
+            return false;
         }
     }
 

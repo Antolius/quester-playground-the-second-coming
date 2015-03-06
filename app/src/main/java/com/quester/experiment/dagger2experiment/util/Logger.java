@@ -6,74 +6,79 @@ import com.quester.experiment.dagger2experiment.BuildConfig;
 
 import java.util.IllegalFormatException;
 
-/**
- * Created by Josip on 16/01/2015!
- */
 public class Logger {
 
-    public static final String TAG = "Logger";
+    public static Logger instance(Class clazz){
+        return new Logger(clazz.getName());
+    }
 
-    public static void verbose(String tag, String message, Object... parameters) {
+    private final String tag;
+
+    public Logger(String tag) {
+        this.tag = tag;
+    }
+
+    public void verbose(String message, Object... parameters) {
         if (BuildConfig.DEBUG) {
             try {
                 Log.v(tag, String.format(message, parameters));
             } catch (NullPointerException exception) {
-                Log.w(TAG, "null message sent to verbose logger from " + tag);
+                Log.w(tag, "null message sent to verbose logger from " + tag);
             } catch (IllegalFormatException exception) {
-                Log.w(TAG, "illegal format sent to verbose logger from " + tag + ", original format=\"" + message + "\"");
+                Log.w(tag, "illegal format sent to verbose logger from " + tag + ", original format=\"" + message + "\"");
             }
         }
     }
 
-    public static void info(String tag, String message, Object... parameters) {
+    public void info(String message, Object... parameters) {
         if (BuildConfig.DEBUG) {
             try {
                 Log.i(tag, String.format(message, parameters));
             } catch (NullPointerException exception) {
-                Log.w(TAG, "null message sent to info logger from " + tag);
+                Log.w(tag, "null message sent to info logger from " + tag);
             } catch (IllegalFormatException exception) {
-                Log.w(TAG, "illegal format sent to info logger from " + tag + ", original format=\"" + message + "\"");
+                Log.w(tag, "illegal format sent to info logger from " + tag + ", original format=\"" + message + "\"");
             }
         }
     }
 
-    public static void debug(String tag, String message, Object... parameters) {
+    public void debug(String message, Object... parameters) {
         try {
             Log.d(tag, String.format(message, parameters));
         } catch (NullPointerException exception) {
-            Log.d(TAG, "null message sent to debug logger from " + tag);
+            Log.d(tag, "null message sent to debug logger from " + tag);
         } catch (IllegalFormatException exception) {
-            Log.d(TAG, "illegal format sent to debug logger from " + tag + ", original format=\"" + message + "\"");
+            Log.d(tag, "illegal format sent to debug logger from " + tag + ", original format=\"" + message + "\"");
         }
     }
 
-    public static void warning(String tag, String message, Object... parameters) {
+    public void warning(String message, Object... parameters) {
         try {
             Log.w(tag, String.format(message, parameters));
         } catch (NullPointerException exception) {
-            Log.w(TAG, "null message sent to warning logger from " + tag);
+            Log.w(tag, "null message sent to warning logger from " + tag);
         } catch (IllegalFormatException exception) {
-            Log.w(TAG, "illegal format sent to warning logger from " + tag + ", original format=\"" + message + "\"");
+            Log.w(tag, "illegal format sent to warning logger from " + tag + ", original format=\"" + message + "\"");
         }
     }
 
-    public static void error(String tag, String message, Object... parameters) {
+    public void error(String message, Object... parameters) {
         try {
             Log.e(tag, String.format(message, parameters));
         } catch (NullPointerException exception) {
-            Log.e(TAG, "null message sent to error logger from " + tag);
+            Log.e(tag, "null message sent to error logger from " + tag);
         } catch (IllegalFormatException exception) {
-            Log.e(TAG, "illegal format sent to error logger from " + tag + ", original format=\"" + message + "\"");
+            Log.e(tag, "illegal format sent to error logger from " + tag + ", original format=\"" + message + "\"");
         }
     }
 
-    public static void wtf(String tag, String message, Object... parameters) {
+    public void wtf(String message, Object... parameters) {
         try {
             Log.wtf(tag, String.format(message, parameters));
         } catch (NullPointerException exception) {
-            Log.wtf(TAG, "null message sent to WTF logger from " + tag);
+            Log.wtf(tag, "null message sent to WTF logger from " + tag);
         } catch (IllegalFormatException exception) {
-            Log.wtf(TAG, "illegal format sent to WTF logger from " + tag + ", original format=\"" + message + "\"");
+            Log.wtf(tag, "illegal format sent to WTF logger from " + tag + ", original format=\"" + message + "\"");
         }
     }
 }

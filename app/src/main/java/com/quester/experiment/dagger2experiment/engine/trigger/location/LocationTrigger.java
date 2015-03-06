@@ -21,7 +21,7 @@ import static com.quester.experiment.dagger2experiment.engine.trigger.location.C
 
 public class LocationTrigger extends BroadcastReceiver implements Trigger {
 
-    public static final String TAG = "LocationTrigger";
+    private static final Logger logger = Logger.instance(LocationTrigger.class);
 
     private CheckpointReachedListener listener;
 
@@ -37,7 +37,7 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
 
     @Override
     public void setCheckpointReachedListener(CheckpointReachedListener listener) {
-        Logger.verbose(TAG, "setting checkpointReachedListener");
+        logger.verbose("setting checkpointReachedListener");
 
         this.listener = listener;
     }
@@ -62,13 +62,13 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        Logger.debug(TAG, "onReceive is called");
+        logger.debug("onReceive is called");
 
         Checkpoint triggeringCheckpoint = geofencesTracker
                 .getTrackingCheckpointById(extractCheckpointIdFromIntent(intent));
         Location location = extractLocationFromIntent(intent);
 
-        Logger.verbose(TAG, "triggeringCheckpoint=%s, location=%s", triggeringCheckpoint, location);
+        logger.verbose("triggeringCheckpoint=%s, location=%s", triggeringCheckpoint, location);
 
         if (triggeringCheckpoint.getArea().isInside(new Point(location))) {
             listener.onCheckpointReached(triggeringCheckpoint);
@@ -79,7 +79,7 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
         try {
             return Long.valueOf(intent.getStringExtra(CHECKPOINT_ID_EXTRA_ID));
         } catch (NullPointerException exception) {
-            Logger.error(TAG, "exception extracting checkpoint id from intent");
+            logger.error("Exception extracting checkpoint id from intent");
             throw new IllegalArgumentException("Missing checkpoint id as string extra in intent");
         }
     }
@@ -88,7 +88,7 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
         Location location = intent.getParcelableExtra(LOCATION_EXTRA_ID);
 
         if (location == null) {
-            Logger.error(TAG, "no location found in intent");
+            logger.error("No location found in intent");
             throw new IllegalArgumentException("Missing Location as parcelable extra in the intent");
         }
 

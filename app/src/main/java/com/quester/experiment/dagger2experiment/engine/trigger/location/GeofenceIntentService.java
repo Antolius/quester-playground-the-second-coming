@@ -15,37 +15,37 @@ import static com.quester.experiment.dagger2experiment.engine.trigger.location.C
  */
 public class GeofenceIntentService extends IntentService {
 
-    public static final String TAG = "GeofenceIntentService";
+    private static final Logger logger = Logger.instance(GeofenceIntentService.class);
 
     public GeofenceIntentService() {
-        super(TAG);
+        super("GeofenceIntentService");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Logger.verbose(TAG, "onHandleIntent called");
+        logger.verbose("onHandleIntent called");
 
         GeofencingEvent event = GeofencingEvent.fromIntent(intent);
 
         if (event.hasError()) {
-            Logger.error(TAG, "geofencing error with code %debug has occurred", event.getErrorCode());
+            logger.error( "geofencing error with code %debug has occurred", event.getErrorCode());
             return;
         }
 
         if (event.getGeofenceTransition() == -1) {
-            Logger.warning(TAG, "geofence event not describing transition! Triggering intents action is %s", intent.getAction());
+            logger.warning("geofence event not describing transition! Triggering intents action is %s", intent.getAction());
             return;
         }
 
         Geofence geofence = event.getTriggeringGeofences().get(0);
-        Logger.verbose(TAG, "triggering geofence=%s", geofence.toString());
+        logger.verbose("triggering geofence=%s", geofence.toString());
 
         Location location = event.getTriggeringLocation();
-        Logger.verbose(TAG, "triggering location=%s", location.toString());
+        logger.verbose("triggering location=%s", location.toString());
 
         //TODO: handle multiple triggering geofences at once
 
-        Logger.verbose(TAG, "sending broadcast...");
+        logger.verbose("sending broadcast...");
         sendBroadcast(new Intent(GEOFENCE_ENTERED_ACTION)
                         .putExtra(CHECKPOINT_ID_EXTRA_ID, geofence.getRequestId())
                         .putExtra(LOCATION_EXTRA_ID, location)

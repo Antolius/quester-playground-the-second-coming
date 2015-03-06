@@ -41,4 +41,13 @@ public class QuestPackage {
     public String getDirectoryName() {
         return id + "_" + name;
     }
+
+    @Override
+    public String toString() {
+        return "QuestPackage{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", file=" + file +
+                '}';
+    }
 }

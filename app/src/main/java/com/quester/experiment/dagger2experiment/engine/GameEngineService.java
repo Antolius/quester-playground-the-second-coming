@@ -20,13 +20,9 @@ import javax.inject.Inject;
 
 import static com.quester.experiment.dagger2experiment.data.quest.QuestGraphUtils.getRootCheckpoints;
 
-
-/**
- * Created by Josip on 14/01/2015!
- */
 public class GameEngineService extends GameService implements CheckpointReachedListener {
 
-    public static final String TAG = "GameEngineService";
+    private static final Logger logger = Logger.instance(GameEngineService.class);
 
     @Inject
     protected List<Processor> checkpointVisitabillityProcessors;
@@ -45,12 +41,12 @@ public class GameEngineService extends GameService implements CheckpointReachedL
     @Override
     public void onCreate() {
 
-        Logger.verbose(TAG, "onCreate is called, initiating dependency injection...");
+        logger.verbose("onCreate is called, initiating dependency injection...");
         super.onCreate();
 
         buildEngineComponent();
 
-        Logger.verbose(TAG, "Injected dependencies");
+        logger.verbose("Injected dependencies");
     }
 
     private void buildEngineComponent() {
@@ -65,7 +61,7 @@ public class GameEngineService extends GameService implements CheckpointReachedL
     @Override
     public void onCheckpointReached(Checkpoint reachedCheckpoint) {
 
-        Logger.debug(TAG, "onCheckpointReached called with %s", reachedCheckpoint.toString());
+        logger.debug("onCheckpointReached called with %s", reachedCheckpoint.toString());
 
         if (isCheckpointVisitable(reachedCheckpoint)){
 
@@ -85,7 +81,7 @@ public class GameEngineService extends GameService implements CheckpointReachedL
 
     private void visitCheckpoint(Checkpoint visitedCheckpoint) {
 
-        Logger.debug(TAG, "visited checkpoint %s", visitedCheckpoint.toString());
+        logger.debug("visited checkpoint %s", visitedCheckpoint.toString());
 
         notifier.notifyCheckpointReached(visitedCheckpoint);
 
@@ -107,7 +103,7 @@ public class GameEngineService extends GameService implements CheckpointReachedL
     @Override
     protected void stopGame() {
 
-        Logger.verbose(TAG, "stopping the current game");
+        logger.verbose("stopping the current game");
 
         stopTriggers();
 
@@ -125,7 +121,7 @@ public class GameEngineService extends GameService implements CheckpointReachedL
     @Override
     protected void startGame(Quest quest) {
 
-        Logger.verbose(TAG, "game starting with quest %s, id=%debug", quest.getName(), quest.getId());
+        logger.verbose("game starting with quest %s, id=%debug", quest.getName(), quest.getId());
 
         if (isGameInProgress) {
             stopGame();

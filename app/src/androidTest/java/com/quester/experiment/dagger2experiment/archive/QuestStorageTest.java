@@ -26,6 +26,8 @@ public class QuestStorageTest {
 
     private List<QuestPackage> packageList;
     private String jsonScroll;
+    private QuestPackage questPackage;
+    private boolean isStored;
 
     @Before
     public void setUp() {
@@ -46,11 +48,22 @@ public class QuestStorageTest {
     @Test
     public void questIsUnpackedToInternalStorage() throws IOException {
 
-        givenPackageFromAssets("123_test.qst");
+        givenPackageInInternalStorage("123_test.qst");
 
         whenStorePackage();
 
         thenFolderExistsInInternalStorage("123_test");
+        thenStoringSucceeded();
+    }
+
+    @Test
+    public void questFailedToUnpackedToInternalStorage() throws IOException {
+
+        givenPackageWithNoFileInInternalStorage();
+
+        whenStorePackage();
+
+        thenStoringFailed();
     }
 
     //simple storage fails to delete folder
@@ -89,19 +102,23 @@ public class QuestStorageTest {
     private void givenPackageInInternalStorage(String name) throws IOException {
         TestUtils.moveQuestPackageFromAssetsToExternalStorage(name);
         packageList = storage.findQuestPackages();
+        questPackage = packageList.get(0);
         storage.storePackage(packageList.get(0));
     }
 
-    private void whenFindQuestPackages(){
+    private void givenPackageWithNoFileInInternalStorage() throws IOException {
+        questPackage = new QuestPackage(123L, "test", null);
+    }
+
+    private void whenFindQuestPackages() {
         packageList = storage.findQuestPackages();
     }
 
-    private void whenStorePackage(){
-        packageList = storage.findQuestPackages();
-        storage.storePackage(packageList.get(0));
+    private void whenStorePackage() {
+        isStored = storage.storePackage(questPackage);
     }
 
-    private void whenExtractQuestScroll(){
+    private void whenExtractQuestScroll() {
         packageList = storage.findQuestPackages();
         jsonScroll = storage.extractQuestJson(packageList.get(0));
     }
@@ -110,18 +127,18 @@ public class QuestStorageTest {
         storage.removeQuest(new QuestPackage(id, questName, null));
     }
 
-    private void thenFoundPackages(int numberOfQuestPackages){
+    private void thenFoundPackages(int numberOfQuestPackages) {
 
         assertEquals(numberOfQuestPackages, packageList.size());
     }
 
-    private void thenFirstPackageEquals(QuestPackage questPackage){
+    private void thenFirstPackageEquals(QuestPackage questPackage) {
 
         assertEquals(questPackage.getName(), packageList.get(0).getName());
         assertEquals(questPackage.getId(), packageList.get(0).getId());
     }
 
-    private void thenQuestScrollIs(String questJson){
+    private void thenQuestScrollIs(String questJson) {
 
         assertEquals(jsonScroll, questJson);
     }
@@ -131,7 +148,16 @@ public class QuestStorageTest {
     }
 
     private void thenFolderNotExistsInInternalStorage(String questFolder) {
-        assertFalse(SimpleStorage.getInternalStorage(Robolectric.application).isDirectoryExists("Quests/"+questFolder));
+        assertFalse(SimpleStorage.getInternalStorage(Robolectric.application).isDirectoryExists("Quests/" + questFolder));
+    }
+
+    private void thenStoringFailed() {
+
+        assertEquals(false, isStored);
+    }
+
+    private void thenStoringSucceeded() {
+        assertEquals(true, isStored);
     }
 
 }

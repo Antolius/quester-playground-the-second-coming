@@ -11,7 +11,7 @@ import org.json.JSONException;
  */
 public class GameState extends QuestState {
 
-    private static final String TAG = "GameState";
+    private static final Logger logger = Logger.instance(GameState.class);
 
     private PersistentGameObject persistentGameObject;
 
@@ -34,7 +34,7 @@ public class GameState extends QuestState {
         try {
             this.persistentGameObject = PersistentGameObject.fromString(persistentGameObject);
         } catch (JSONException e) {
-            Logger.error(TAG, "formatting persistentGameObject %s failed with exception message %s", persistentGameObject, e.getMessage());
+            logger.error("formatting persistentGameObject %s failed with exception message %s", persistentGameObject, e.getMessage());
             throw new MisformattedJsonString();
         }
     }

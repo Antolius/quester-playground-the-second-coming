@@ -7,7 +7,7 @@ import com.quester.experiment.dagger2experiment.util.Logger;
 
 public class GameStateProvider {
 
-    public static final String TAG = "GameStateProvider";
+    private static final Logger logger = Logger.instance(GameStateProvider.class);
 
     private final GameStateRepository repository;
 
@@ -19,7 +19,8 @@ public class GameStateProvider {
     }
 
     public void initiate(Quest quest) {
-        Logger.verbose(TAG, "initiated with quest %s, id=%debug", quest.getName(), quest.getId());
+
+        logger.verbose("initiated with quest %s, id=%debug", quest.getName(), quest.getId());
 
         this.currentQuestId = quest.getId();
         if(repository.exists(currentQuestId)){
@@ -36,7 +37,9 @@ public class GameStateProvider {
     }
 
     public void saveGameState() {
-        Logger.verbose(TAG, "saved game state for quest id=%debug", currentQuestId);
+
+        logger.verbose("saved game state for quest id=%debug", currentQuestId);
+
         repository.save(gameState);
     }
 }

@@ -14,7 +14,7 @@ import org.parceler.Parcels;
  */
 public abstract class GameService extends Service {
 
-    public static final String TAG = "GameService";
+    private static final Logger logger = Logger.instance(GameService.class);
 
     public static final String QUEST_EXTRA_ID = "QUEST_EXTRA_ID";
 
@@ -25,7 +25,7 @@ public abstract class GameService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Logger.verbose(TAG, "onStartCommand called");
+        logger.verbose("onStartCommand called");
 
         startGame(extractQuestFromIntent(intent));
         return super.onStartCommand(intent, flags, startId);
@@ -33,7 +33,7 @@ public abstract class GameService extends Service {
 
     @Override
     public void onDestroy() {
-        Logger.verbose(TAG, "onDestroy called");
+        logger.verbose("onDestroy called");
 
         stopGame();
         super.onDestroy();

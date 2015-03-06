@@ -14,12 +14,10 @@ import javax.inject.Inject;
 import static com.quester.experiment.dagger2experiment.engine.processor.javascript.ScriptableConverter.getScriptableFromString;
 import static com.quester.experiment.dagger2experiment.engine.processor.javascript.ScriptableConverter.getStringFromScriptable;
 
-/**
- * Created by Josip on 14/01/2015!
- */
 public class JavaScriptProcessor implements Processor {
 
-    public static final String TAG = "JavaScriptProcessor";
+    private static final Logger logger = Logger.instance(JavaScriptProcessor.class);
+
     public static final String PERSISTENT_GAME_OBJECT = "PERSISTENT_GAME_OBJECT";
 
     private final Scriptable sharedScope;
@@ -36,7 +34,7 @@ public class JavaScriptProcessor implements Processor {
     @Override
     public boolean isCheckpointVisitable(Checkpoint reachedCheckpoint) {
 
-        Logger.debug(TAG, "isCheckpointVisitable called with %s", reachedCheckpoint.toString());
+        logger.debug("isCheckpointVisitable called with %s", reachedCheckpoint.toString());
 
         return !hasScript(reachedCheckpoint) || processCheckpoint(reachedCheckpoint);
     }
@@ -80,14 +78,14 @@ public class JavaScriptProcessor implements Processor {
     private boolean executeScript(String script, Context context, Scriptable executionScope) {
         Object result = context.evaluateString(executionScope, script, "checkpointScript", 1, null);
         String response = Context.toString(result);
-        Logger.verbose(TAG, "executed script and returned %s", response);
+        logger.verbose("executed script and returned %s", response);
         return Boolean.parseBoolean(response);
     }
 
     private void extractAndSavePersistentGameObject(Scriptable executionScope) {
         Scriptable pgoScriptable = (Scriptable) executionScope.get(PERSISTENT_GAME_OBJECT, executionScope);
         String pgoString = getStringFromScriptable(pgoScriptable, sharedScope);
-        Logger.verbose(TAG, "persistentGameObject after script execution: %s", pgoString);
+        logger.verbose("persistentGameObject after script execution: %s", pgoString);
         gameStateProvider.getGameState().setPersistentGameObject(pgoString);
     }
 

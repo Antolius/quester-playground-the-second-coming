@@ -19,12 +19,9 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-/**
- * Created by Josip on 25/01/2015!
- */
 public class CheckpointReachedActivity extends InjectionActivity {
 
-    public static final String TAG = "CheckpointReachedActivity";
+    private static final Logger logger = Logger.instance(CheckpointReachedActivity.class);
 
     @InjectView(R.id.webView)
     protected WebView webView;
@@ -48,7 +45,7 @@ public class CheckpointReachedActivity extends InjectionActivity {
         setContentView(R.layout.activity_checkpoint_reached);
         ButterKnife.inject(this);
 
-        Logger.verbose(TAG, "injected dependencies");
+        logger.verbose("injected dependencies");
 
         renderCurrentCheckpoint();
     }

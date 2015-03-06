@@ -117,7 +117,8 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "testDebug") {
                        '**/*$ViewInjector*.*',
                        '**/BuildConfig.*',
                        '**/Manifest*.*',
-                       '**/*$*']
+                       '**/*$*',
+                       '**/*Module.class']
     )
 
     additionalSourceDirs = files(coverageSourceDirs)
