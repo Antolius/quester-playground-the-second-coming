@@ -1,6 +1,6 @@
 package com.quester.experiment.dagger2experiment.archive;
 
-import com.quester.experiment.dagger2experiment.archive.cryptographer.QuestCryptographer;
+import com.quester.experiment.dagger2experiment.archive.parser.QuestJsonParser;
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
 import com.quester.experiment.dagger2experiment.data.quest.QuestMetaData;
 import com.quester.experiment.dagger2experiment.persistence.quest.QuestRepository;
@@ -26,7 +26,7 @@ public class QuestArchiverTest {
 
     private QuestRepository repository = mock(QuestRepository.class);
     private QuestStorage storage = mock(QuestStorage.class);
-    private QuestCryptographer cryptographer = mock(QuestCryptographer.class);
+    private QuestJsonParser cryptographer = mock(QuestJsonParser.class);
 
     private QuestArchiver archiver;
 
@@ -43,8 +43,8 @@ public class QuestArchiverTest {
         Quest quest = new Quest();
 
         when(repository.findOneByGlobalId(1L)).thenReturn(null);
-        when(storage.getQuestScroll(questPackage)).thenReturn("encrypted");
-        when(cryptographer.decryptQuest("encrypted")).thenReturn(quest);
+        when(storage.getQuestJson(questPackage)).thenReturn("encrypted");
+        when(cryptographer.parseQuestJson("encrypted")).thenReturn(quest);
 
         archiver.saveToArchive(questPackage);
 
@@ -68,9 +68,9 @@ public class QuestArchiverTest {
 
         when(repository.findOneByGlobalId(1L)).thenReturn(persisted);
 
-        when(storage.extractQuestScroll(questPackage)).thenReturn("encrypted");
-        when(storage.getQuestScroll(questPackage)).thenReturn("encrypted");
-        when(cryptographer.decryptQuest("encrypted")).thenReturn(fromPackage);
+        when(storage.extractQuestJson(questPackage)).thenReturn("encrypted");
+        when(storage.getQuestJson(questPackage)).thenReturn("encrypted");
+        when(cryptographer.parseQuestJson("encrypted")).thenReturn(fromPackage);
 
         archiver.saveToArchive(questPackage);
 
@@ -94,8 +94,8 @@ public class QuestArchiverTest {
 
         when(repository.findOneByGlobalId(1L)).thenReturn(persisted);
 
-        when(storage.extractQuestScroll(questPackage)).thenReturn("encrypted");
-        when(cryptographer.decryptQuest("encrypted")).thenReturn(fromPackage);
+        when(storage.extractQuestJson(questPackage)).thenReturn("encrypted");
+        when(cryptographer.parseQuestJson("encrypted")).thenReturn(fromPackage);
 
         archiver.saveToArchive(questPackage);
 

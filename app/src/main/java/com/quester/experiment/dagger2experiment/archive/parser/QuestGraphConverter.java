@@ -1,4 +1,4 @@
-package com.quester.experiment.dagger2experiment.archive.cryptographer;
+package com.quester.experiment.dagger2experiment.archive.parser;
 
 import com.bluelinelabs.logansquare.typeconverters.StringBasedTypeConverter;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -74,7 +74,7 @@ public class QuestGraphConverter extends StringBasedTypeConverter<QuestGraph> {
         return links;
     }
 
-    public List<Long> parseChildIds(JsonParser jsonParser) throws IOException {
+    private List<Long> parseChildIds(JsonParser jsonParser) throws IOException {
 
         List<Long> children = new ArrayList<>();
 

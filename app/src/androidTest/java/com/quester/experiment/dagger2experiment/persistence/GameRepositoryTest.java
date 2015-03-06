@@ -23,7 +23,7 @@ public class GameRepositoryTest {
         GameStateRepository repository = new GameStateRepository(Robolectric.application);
 
         Quest quest = MockedQuestUtils.mockLinearQuest(1, "test", 2);
-        GameState state = new GameState(quest.getId(), quest.getQuestGraph(), "{}");
+        GameState state = new GameState(quest.getId(), quest, "{}");
         repository.save(state);
         GameState state1 = repository.findOne(1);
         assertEquals("{}", state1.getPersistentGameObjectAsString());

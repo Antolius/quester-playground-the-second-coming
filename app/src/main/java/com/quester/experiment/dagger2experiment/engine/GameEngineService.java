@@ -10,7 +10,6 @@ import com.quester.experiment.dagger2experiment.engine.provider.GameStateModule;
 import com.quester.experiment.dagger2experiment.engine.trigger.CheckpointReachedListener;
 import com.quester.experiment.dagger2experiment.engine.trigger.Trigger;
 import com.quester.experiment.dagger2experiment.engine.provider.GameStateProvider;
-import com.quester.experiment.dagger2experiment.persistence.module.DatabaseModule;
 import com.quester.experiment.dagger2experiment.util.Logger;
 
 import java.util.Collection;
@@ -29,8 +28,6 @@ public class GameEngineService extends GameService implements CheckpointReachedL
 
     public static final String TAG = "GameEngineService";
 
-    boolean isGameInProgress = false;
-
     @Inject
     protected List<Processor> checkpointVisitabillityProcessors;
 
@@ -43,8 +40,11 @@ public class GameEngineService extends GameService implements CheckpointReachedL
     @Inject
     protected Notifier notifier;
 
+    private boolean isGameInProgress = false;
+
     @Override
     public void onCreate() {
+
         Logger.verbose(TAG, "onCreate is called, initiating dependency injection...");
         super.onCreate();
 
@@ -64,17 +64,27 @@ public class GameEngineService extends GameService implements CheckpointReachedL
 
     @Override
     public void onCheckpointReached(Checkpoint reachedCheckpoint) {
+
         Logger.debug(TAG, "onCheckpointReached called with %s", reachedCheckpoint.toString());
+
+        if (isCheckpointVisitable(reachedCheckpoint)){
+
+            visitCheckpoint(reachedCheckpoint);
+        }
+    }
+
+    private boolean isCheckpointVisitable(Checkpoint reachedCheckpoint) {
 
         for (Processor processor : checkpointVisitabillityProcessors) {
             if (!processor.isCheckpointVisitable(reachedCheckpoint)) {
-                return;
+                return false;
             }
         }
-        visitCheckpoint(reachedCheckpoint);
+        return true;
     }
 
     private void visitCheckpoint(Checkpoint visitedCheckpoint) {
+
         Logger.debug(TAG, "visited checkpoint %s", visitedCheckpoint.toString());
 
         notifier.notifyCheckpointReached(visitedCheckpoint);
@@ -96,18 +106,25 @@ public class GameEngineService extends GameService implements CheckpointReachedL
 
     @Override
     protected void stopGame() {
+
         Logger.verbose(TAG, "stopping the current game");
 
-        for (Trigger trigger : checkpointReachedTriggers) {
-            trigger.stop();
-        }
+        stopTriggers();
+
         gameStateProvider.saveGameState();
 
         isGameInProgress = false;
     }
 
+    private void stopTriggers() {
+        for (Trigger trigger : checkpointReachedTriggers) {
+            trigger.stop();
+        }
+    }
+
     @Override
     protected void startGame(Quest quest) {
+
         Logger.verbose(TAG, "game starting with quest %s, id=%debug", quest.getName(), quest.getId());
 
         if (isGameInProgress) {
@@ -115,14 +132,19 @@ public class GameEngineService extends GameService implements CheckpointReachedL
         }
 
         gameStateProvider.initiate(quest);
-        for (Trigger trigger : checkpointReachedTriggers) {
-            trigger.setCheckpointReachedListener(this);
-            trigger.start();
-        }
+
+        startTriggers();
 
         registerReachableCheckpoints(getRootCheckpoints(quest.getQuestGraph()));
 
         isGameInProgress = true;
+    }
+
+    private void startTriggers() {
+        for (Trigger trigger : checkpointReachedTriggers) {
+            trigger.setCheckpointReachedListener(this);
+            trigger.start();
+        }
     }
 
     private void registerReachableCheckpoints(Collection<Checkpoint> reachableCheckpoints) {

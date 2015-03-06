@@ -45,6 +45,7 @@ public class TimeTrigger implements Trigger {
 
     @Override
     public void registerReachableCheckpoints(Collection<Checkpoint> reachableCheckpoints) {
+
         if (reachableCheckpoints == null || reachableCheckpoints.isEmpty()) {
             return;
         }
@@ -54,6 +55,7 @@ public class TimeTrigger implements Trigger {
     }
 
     private void executeNewTask() {
+
         if (currentTask != null) {
             currentTask.cancel(true);
         }

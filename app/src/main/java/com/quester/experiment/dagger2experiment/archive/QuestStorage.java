@@ -2,6 +2,8 @@ package com.quester.experiment.dagger2experiment.archive;
 
 import android.content.Context;
 
+import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
+import com.quester.experiment.dagger2experiment.data.quest.Quest;
 import com.sromku.simple.storage.SimpleStorage;
 import com.sromku.simple.storage.Storage;
 import com.sromku.simple.storage.helpers.OrderType;
@@ -25,6 +27,10 @@ public class QuestStorage {
         externalStorage.createDirectory("Quests", false);
     }
 
+    /**
+     * finds all *.qst files in external storage and returns their quest package representations
+     * @return list of quest packages
+     */
     public List<QuestPackage> findQuestPackages() {
 
         return findQuestFiles("");
@@ -55,37 +61,89 @@ public class QuestStorage {
         return result;
     }
 
-    public void storePackage(QuestPackage questPackage){
+    /**
+     * saves a representation of a *.qst file
+     * by unpacking it to internal storage
+     * @param questPackage a representation od a *.qst file
+     */
+    public void storePackage(QuestPackage questPackage) {
 
         unpack(questPackage, internalStorage);
     }
 
     /**
      * retrieves content of quest.json file inside the quest package in internal storage
+     *
      * @param questPackage quest package descriptor
-     * @return json from quest.json field inside the package
+     * @return json from quest.json file inside the package
      */
-    public String getQuestScroll(QuestPackage questPackage) {
+    public String getQuestJson(QuestPackage questPackage) {
 
-        return getQuestScroll(questPackage, internalStorage);
+        return getQuestJson(questPackage, internalStorage);
+    }
+
+    /**
+     * retrieves content of a javascript file inside the quest for a checkpoint in internal storage
+     *
+     * @param quest      quest to search in internal storage
+     * @param checkpoint checkpoint to determine which script to run
+     * @return string from *.js file inside the quest scripts directory
+     */
+    public String getScriptContent(Quest quest, Checkpoint checkpoint) {
+
+        return internalStorage.readTextFile(
+                "Quests/" + quest.getDirectoryName() + "/scripts",
+                checkpoint.getEventsScriptFileName() + ".js");
+    }
+
+    /**
+     * checks if a javascript file inside the quest for a checkpoint in internal storage exists
+     *
+     * @param quest      quest to search in internal storage
+     * @param checkpoint checkpoint to determine which script to run
+     * @return true if script exists false instead
+     */
+    public boolean hasScript(Quest quest, Checkpoint checkpoint) {
+
+        return checkpoint.getEventsScriptFileName() != null
+                && internalStorage.isFileExist("Quests/"
+                + quest.getQuestMetaData().getOriginalId()
+                + "_" + quest.getName() + "/scripts",
+                checkpoint.getEventsScriptFileName() + ".js");
+
+    }
+
+    /**
+     * retrieves content of a html file inside the quest for a checkpoint in internal storage
+     *
+     * @param quest      quest to search in internal storage
+     * @param checkpoint checkpoint to determine which html view to return
+     * @return string from *.js file inside the quest scripts directory
+     */
+    public String getHtmlViewContent(Quest quest, Checkpoint checkpoint) {
+
+        return internalStorage.readTextFile(
+                "Quests/" + quest.getDirectoryName() + "/html",
+                checkpoint.getViewHtmlFileName() + ".html");
     }
 
     /**
      * unpacks questPackage temporarily to Quests directory in external storage
      * to read the content of quest.json
+     *
      * @param questPackage quest package descriptor
      * @return json from quest.json field inside the package
      */
-    public String extractQuestScroll(QuestPackage questPackage) {
+    public String extractQuestJson(QuestPackage questPackage) {
 
         unpack(questPackage, externalStorage);
 
-        String questScroll = getQuestScroll(questPackage, externalStorage);
+        String questJson = getQuestJson(questPackage, externalStorage);
         externalStorage.deleteDirectory("Quests/" + questPackage.getDirectoryName());
-        return questScroll;
+        return questJson;
     }
 
-    private void unpack(QuestPackage questPackage, Storage storage){
+    private void unpack(QuestPackage questPackage, Storage storage) {
         try {
             new ZipFile(questPackage.getFile()).extractAll(storage.getFile("Quests").getPath());
         } catch (ZipException e) {
@@ -93,13 +151,14 @@ public class QuestStorage {
         }
     }
 
-    private String getQuestScroll(QuestPackage questPackage, Storage storage){
+    private String getQuestJson(QuestPackage questPackage, Storage storage) {
 
         return storage.readTextFile("Quests/" + questPackage.getDirectoryName(), "quest.json");
     }
 
     /**
      * quest folder and sub data are removed
+     *
      * @param questPackage should be changed to simpler
      */
     public void removeQuest(QuestPackage questPackage) {

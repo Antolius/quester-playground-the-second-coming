@@ -1,5 +1,6 @@
 package com.quester.experiment.dagger2experiment.engine.processor.javascript;
 
+import com.quester.experiment.dagger2experiment.archive.QuestStorage;
 import com.quester.experiment.dagger2experiment.engine.EngineScope;
 
 import org.mozilla.javascript.Context;
@@ -30,8 +31,8 @@ public class JavaScriptProcessorModule {
 
     @Provides
     @Singleton
-    public JavaScriptLoader provideJavaScriptLoader(@EngineScope android.content.Context context) {
-        return new JavaScriptLoader(context);
+    public QuestStorage provideQuestStorage(@EngineScope android.content.Context context) {
+        return new QuestStorage(context);
     }
 
 }

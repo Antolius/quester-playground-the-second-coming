@@ -1,7 +1,7 @@
 package com.quester.experiment.dagger2experiment.archive;
 
 import com.quester.experiment.dagger2experiment.TestUtils;
-import com.quester.experiment.dagger2experiment.archive.cryptographer.QuestCryptographer;
+import com.quester.experiment.dagger2experiment.archive.parser.QuestJsonParser;
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
 import com.quester.experiment.dagger2experiment.persistence.quest.QuestRepository;
 import com.sromku.simple.storage.SimpleStorage;
@@ -32,7 +32,7 @@ public class QuestArchiverIntegrationTest {
 
         repository = new QuestRepository(TestUtils.getDatabase());
         QuestStorage storage = new QuestStorage(Robolectric.application);
-        QuestCryptographer cryptographer = new QuestCryptographer();
+        QuestJsonParser cryptographer = new QuestJsonParser();
 
         archiver = new QuestArchiver(repository, storage, cryptographer);
     }

@@ -12,7 +12,7 @@ import com.quester.experiment.dagger2experiment.R;
 import com.quester.experiment.dagger2experiment.archive.QuestArchiver;
 import com.quester.experiment.dagger2experiment.archive.QuestPackage;
 import com.quester.experiment.dagger2experiment.archive.QuestStorage;
-import com.quester.experiment.dagger2experiment.archive.cryptographer.QuestCryptographer;
+import com.quester.experiment.dagger2experiment.archive.parser.QuestJsonParser;
 import com.quester.experiment.dagger2experiment.persistence.quest.QuestRepository;
 
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class StorageTestActivity extends InjectionActivity {
 
         ButterKnife.inject(this);
 
-        archiver = new QuestArchiver(questRepository, new QuestStorage(this), new QuestCryptographer());
+        archiver = new QuestArchiver(questRepository, new QuestStorage(this), new QuestJsonParser());
 
         //find .qst files in external storage
         final List<QuestPackage> questFiles = archiver.findQuestPackages();

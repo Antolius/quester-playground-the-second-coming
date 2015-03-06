@@ -32,10 +32,15 @@ public class GameEngineServiceTest {
     public void setUp(){
         service = new GameEngineService();
 
-        Context context = Robolectric.application;
+        final Context context = Robolectric.application;
 
         EngineComponent engineComponent = Dagger_EngineComponent.builder()
-                .engineModule(new EngineModule(service))
+                .engineModule(new EngineModule(service){
+                    @Override
+                    public Context provideServiceContext() {
+                        return context;
+                    }
+                })
                 .notifierModule(new NotifierTestModule(context, notifier))
                 .gameStateModule(new GameStateModule(context))
                 .build();

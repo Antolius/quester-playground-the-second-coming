@@ -2,7 +2,7 @@ package com.quester.experiment.dagger2experiment.archive;
 
 import android.content.Context;
 
-import com.quester.experiment.dagger2experiment.archive.cryptographer.QuestCryptographer;
+import com.quester.experiment.dagger2experiment.archive.parser.QuestJsonParser;
 import com.quester.experiment.dagger2experiment.persistence.quest.QuestRepository;
 
 import javax.inject.Inject;
@@ -26,6 +26,6 @@ public class ArchiverModule {
     @Singleton
     @Provides
     public QuestArchiver provideQuestArchiver() {
-        return new QuestArchiver(repository, new QuestStorage(context), new QuestCryptographer());
+        return new QuestArchiver(repository, new QuestStorage(context), new QuestJsonParser());
     }
 }

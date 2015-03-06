@@ -8,6 +8,8 @@ import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 import com.quester.experiment.dagger2experiment.util.Logger;
 
+import static com.quester.experiment.dagger2experiment.engine.trigger.location.Constants.*;
+
 /**
  * Created by Josip on 14/01/2015!
  */
@@ -44,9 +46,9 @@ public class GeofenceIntentService extends IntentService {
         //TODO: handle multiple triggering geofences at once
 
         Logger.verbose(TAG, "sending broadcast...");
-        sendBroadcast(new Intent(Constants.GEOFENCE_ENTERED_ACTION)
-                        .putExtra(Constants.CHECKPOINT_ID_EXTRA_ID, geofence.getRequestId())
-                        .putExtra(Constants.LOCATION_EXTRA_ID, location)
+        sendBroadcast(new Intent(GEOFENCE_ENTERED_ACTION)
+                        .putExtra(CHECKPOINT_ID_EXTRA_ID, geofence.getRequestId())
+                        .putExtra(LOCATION_EXTRA_ID, location)
         );
     }
 }

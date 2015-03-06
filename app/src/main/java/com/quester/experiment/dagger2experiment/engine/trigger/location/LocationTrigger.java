@@ -17,9 +17,8 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
-/**
- * Created by Josip on 14/01/2015!
- */
+import static com.quester.experiment.dagger2experiment.engine.trigger.location.Constants.*;
+
 public class LocationTrigger extends BroadcastReceiver implements Trigger {
 
     public static final String TAG = "LocationTrigger";
@@ -45,7 +44,7 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
 
     @Override
     public void start() {
-        context.registerReceiver(this, new IntentFilter(Constants.GEOFENCE_ENTERED_ACTION));
+        context.registerReceiver(this, new IntentFilter(GEOFENCE_ENTERED_ACTION));
         geofencesTracker.start();
     }
 
@@ -62,9 +61,11 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
         Logger.debug(TAG, "onReceive is called");
 
-        Checkpoint triggeringCheckpoint = geofencesTracker.getTrackingCheckpointById(extractCheckpointIdFormIntent(intent));
+        Checkpoint triggeringCheckpoint = geofencesTracker
+                .getTrackingCheckpointById(extractCheckpointIdFromIntent(intent));
         Location location = extractLocationFromIntent(intent);
 
         Logger.verbose(TAG, "triggeringCheckpoint=%s, location=%s", triggeringCheckpoint, location);
@@ -74,9 +75,9 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
         }
     }
 
-    private long extractCheckpointIdFormIntent(Intent intent) {
+    private long extractCheckpointIdFromIntent(Intent intent) {
         try {
-            return Long.valueOf(intent.getStringExtra(Constants.CHECKPOINT_ID_EXTRA_ID));
+            return Long.valueOf(intent.getStringExtra(CHECKPOINT_ID_EXTRA_ID));
         } catch (NullPointerException exception) {
             Logger.error(TAG, "exception extracting checkpoint id from intent");
             throw new IllegalArgumentException("Missing checkpoint id as string extra in intent");
@@ -84,7 +85,7 @@ public class LocationTrigger extends BroadcastReceiver implements Trigger {
     }
 
     private Location extractLocationFromIntent(Intent intent) {
-        Location location = intent.getParcelableExtra(Constants.LOCATION_EXTRA_ID);
+        Location location = intent.getParcelableExtra(LOCATION_EXTRA_ID);
 
         if (location == null) {
             Logger.error(TAG, "no location found in intent");

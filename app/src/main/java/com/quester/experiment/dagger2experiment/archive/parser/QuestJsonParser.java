@@ -1,13 +1,13 @@
-package com.quester.experiment.dagger2experiment.archive.cryptographer;
+package com.quester.experiment.dagger2experiment.archive.parser;
 
 import com.bluelinelabs.logansquare.LoganSquare;
 import com.quester.experiment.dagger2experiment.data.quest.Quest;
 
 import java.io.IOException;
 
-public class QuestCryptographer {
+public class QuestJsonParser {
 
-    public Quest decryptQuest(String json){
+    public Quest parseQuestJson(String json){
 
         try {
             return LoganSquare.parse(json, Quest.class);
@@ -17,7 +17,7 @@ public class QuestCryptographer {
         }
     }
 
-    public String encryptQuest(Quest quest){
+    public String serializeQuestToJson(Quest quest){
 
         try{
             return LoganSquare.serialize(quest);

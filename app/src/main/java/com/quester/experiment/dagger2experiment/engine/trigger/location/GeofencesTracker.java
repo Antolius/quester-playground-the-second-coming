@@ -41,12 +41,27 @@ public class GeofencesTracker implements GoogleApiClient.ConnectionCallbacks, Go
     }
 
     public void trackCheckpoints(Collection<Checkpoint> newTrackingCheckpoints) {
+
         if (apiClient.isConnected()) {
             switchToTrackingNewCheckpoints(newTrackingCheckpoints);
         }
         trackingCheckpoints = newTrackingCheckpoints;
 
         Logger.debug(TAG, "registered geofences for checkpoints=%s", trackingCheckpoints);
+    }
+
+    private void switchToTrackingNewCheckpoints(Collection<Checkpoint> newCheckpoints) {
+        GeofenceApiUtils.removeGeofencesForCheckpoints(apiClient, trackingCheckpoints);
+        GeofenceApiUtils.addGeofencesForCheckpoints(context, apiClient, newCheckpoints);
+    }
+
+    public Checkpoint getTrackingCheckpointById(long checkpointId) {
+        for (Checkpoint checkpoint : trackingCheckpoints) {
+            if (checkpoint.getId() == checkpointId) {
+                return checkpoint;
+            }
+        }
+        return null;
     }
 
     public void start() {
@@ -83,17 +98,4 @@ public class GeofencesTracker implements GoogleApiClient.ConnectionCallbacks, Go
         Logger.error(TAG, "GoogleApiClients connection failed with errorCode=%debug", connectionResult.getErrorCode());
     }
 
-    public Checkpoint getTrackingCheckpointById(long checkpointId) {
-        for (Checkpoint checkpoint : trackingCheckpoints) {
-            if (checkpoint.getId() == checkpointId) {
-                return checkpoint;
-            }
-        }
-        return null;
-    }
-
-    private void switchToTrackingNewCheckpoints(Collection<Checkpoint> newCheckpoints) {
-        GeofenceApiUtils.removeGeofencesForCheckpoints(apiClient, trackingCheckpoints);
-        GeofenceApiUtils.addGeofencesForCheckpoints(context, apiClient, newCheckpoints);
-    }
 }

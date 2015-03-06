@@ -27,7 +27,7 @@ public class GameStateProvider {
             return;
         }
 
-        gameState = new GameState(currentQuestId, quest.getQuestGraph(), "{}");
+        gameState = new GameState(currentQuestId, quest, "{}");
         repository.save(gameState);
     }
 

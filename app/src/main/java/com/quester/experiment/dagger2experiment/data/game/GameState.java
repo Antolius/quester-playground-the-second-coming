@@ -1,5 +1,6 @@
 package com.quester.experiment.dagger2experiment.data.game;
 
+import com.quester.experiment.dagger2experiment.data.quest.Quest;
 import com.quester.experiment.dagger2experiment.data.quest.QuestGraph;
 import com.quester.experiment.dagger2experiment.util.Logger;
 
@@ -14,8 +15,8 @@ public class GameState extends QuestState {
 
     private PersistentGameObject persistentGameObject;
 
-    public GameState(long questId, QuestGraph questGraph, String persistentGameObject) {
-        super(questId, questGraph);
+    public GameState(long questId, Quest quest, String persistentGameObject) {
+        super(questId, quest);
         setPersistentGameObject(persistentGameObject);
     }
 

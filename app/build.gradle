@@ -29,10 +29,20 @@ android {
         testInstrumentationRunner "com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner"
     }
     buildTypes {
+        debug {
+            debuggable true
+            testCoverageEnabled = true
+
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 }
 
@@ -54,7 +64,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     androidTestCompile 'org.robolectric:robolectric:2.3'
-    androidTestCompile ("org.mockito:mockito-core:1.9.5"){
+    androidTestCompile("org.mockito:mockito-core:1.9.5") {
         exclude module: 'asm'
     }
     androidTestCompile('junit:junit:4.11') {
@@ -85,6 +95,41 @@ dependencies {
     compile 'com.bluelinelabs:logansquare:1.0.4'
 }
 
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = "0.7.1.201405082137"
+}
+
+def coverageSourceDirs = [
+        'src/main/java'
+]
+
+task jacocoTestReport(type: JacocoReport, dependsOn: "testDebug") {
+    group = "Reporting"
+
+    description = "Generate Jacoco coverage reports"
+
+    classDirectories = fileTree(
+            dir: 'build/intermediates/classes/debug',
+            excludes: ['**/R.class',
+                       '**/R$*.class',
+                       '**/*$ViewInjector*.*',
+                       '**/BuildConfig.*',
+                       '**/Manifest*.*',
+                       '**/*$*']
+    )
+
+    additionalSourceDirs = files(coverageSourceDirs)
+    sourceDirectories = files(coverageSourceDirs)
+    executionData = files('../app/build/jacoco/testDebug.exec')
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+}
 
 apply plugin: 'idea'
 idea {

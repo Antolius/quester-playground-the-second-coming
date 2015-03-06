@@ -1,4 +1,4 @@
-package com.quester.experiment.dagger2experiment.archive.cryptographer;
+package com.quester.experiment.dagger2experiment.archive.parser;
 
 import com.bluelinelabs.logansquare.LoganSquare;
 import com.quester.experiment.dagger2experiment.data.MockedQuestUtils;
@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
-public class QuestCryptographerTest {
+public class QuestJsonParserTest {
 
     //TODO: fix test, areas are added
     @Ignore

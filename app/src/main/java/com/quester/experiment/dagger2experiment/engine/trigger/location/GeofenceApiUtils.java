@@ -8,55 +8,76 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
+import com.quester.experiment.dagger2experiment.data.checkpoint.area.circle.Circle;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static com.google.android.gms.location.Geofence.*;
 import static com.google.android.gms.location.LocationServices.GeofencingApi;
 
-/**
- * Created by Josip on 14/01/2015!
- */
 public class GeofenceApiUtils {
 
     public static final int LOITERING_DELAY = 1000;
 
-    public static void removeGeofencesForCheckpoints(GoogleApiClient apiClient, Collection<Checkpoint> checkpoints) {
+    public static void removeGeofencesForCheckpoints(GoogleApiClient apiClient,
+                                                     Collection<Checkpoint> checkpoints) {
+
+        GeofencingApi.removeGeofences(apiClient, getIdsToRemove(checkpoints));
+    }
+
+    private static ArrayList<String> getIdsToRemove(Collection<Checkpoint> checkpoints) {
+
         ArrayList<String> geofenceIdsToRemove = new ArrayList<>(checkpoints.size());
         for (Checkpoint checkpoint : checkpoints) {
             geofenceIdsToRemove.add(String.valueOf(checkpoint.getId()));
         }
-
-        GeofencingApi.removeGeofences(apiClient, geofenceIdsToRemove);
+        return geofenceIdsToRemove;
     }
 
-    public static void addGeofencesForCheckpoints(Context context, GoogleApiClient apiClient, Collection<Checkpoint> checkpoints) {
-        GeofencingApi.addGeofences(apiClient, generateGeofencingRequestForCheckpoints(checkpoints), generatePendingRequest(context, checkpoints));
+    public static void addGeofencesForCheckpoints(Context context,
+                                                  GoogleApiClient apiClient,
+                                                  Collection<Checkpoint> checkpoints) {
+        GeofencingApi.addGeofences(
+                apiClient,
+                generateGeofencingRequestForCheckpoints(checkpoints),
+                generatePendingRequest(context));
     }
 
     private static GeofencingRequest generateGeofencingRequestForCheckpoints(Collection<Checkpoint> checkpoints) {
-        return new GeofencingRequest.Builder().addGeofences(generateGeofanceFromCheckpoints(checkpoints)).build();
+        return new GeofencingRequest.Builder()
+                .addGeofences(generateGeofencesFromCheckpoints(checkpoints))
+                .build();
     }
 
-    private static ArrayList<Geofence> generateGeofanceFromCheckpoints(Collection<Checkpoint> checkpoints) {
+    private static ArrayList<Geofence> generateGeofencesFromCheckpoints(Collection<Checkpoint> checkpoints) {
+
         ArrayList<Geofence> geofences = new ArrayList<>(checkpoints.size());
 
         for (Checkpoint checkpoint : checkpoints) {
-            geofences.add(new Geofence.Builder()
-                    .setRequestId(String.valueOf(checkpoint.getId()))
-                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL)
-                    .setLoiteringDelay(LOITERING_DELAY)
-                    .setCircularRegion(checkpoint.getArea().approximatingCircle().getCenter().getLatitude(),
-                            checkpoint.getArea().approximatingCircle().getCenter().getLongitude(),
-                            (float) checkpoint.getArea().approximatingCircle().getRadius())
-                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                    .build());
+            geofences.add(generateGeofenceFromCheckpoint(checkpoint));
         }
 
         return geofences;
     }
 
-    private static PendingIntent generatePendingRequest(Context context, Collection<Checkpoint> checkpoints) {
+    private static Geofence generateGeofenceFromCheckpoint(Checkpoint checkpoint) {
+
+        Circle circle = checkpoint.getArea().approximatingCircle();
+
+        return new Builder()
+                .setRequestId(String.valueOf(checkpoint.getId()))
+                .setTransitionTypes(GEOFENCE_TRANSITION_ENTER | GEOFENCE_TRANSITION_DWELL)
+                .setLoiteringDelay(LOITERING_DELAY)
+                .setCircularRegion(
+                        circle.getCenter().getLatitude(),
+                        circle.getCenter().getLongitude(),
+                        (float) circle.getRadius())
+                .setExpirationDuration(NEVER_EXPIRE)
+                .build();
+    }
+
+    private static PendingIntent generatePendingRequest(Context context) {
         return PendingIntent.getService(
                 context,
                 0,

@@ -7,6 +7,7 @@ import android.webkit.WebView;
 import com.quester.experiment.dagger2experiment.ActivityInjectionComponent;
 import com.quester.experiment.dagger2experiment.InjectionActivity;
 import com.quester.experiment.dagger2experiment.R;
+import com.quester.experiment.dagger2experiment.archive.QuestStorage;
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
 import com.quester.experiment.dagger2experiment.engine.provider.GameStateProvider;
 import com.quester.experiment.dagger2experiment.util.Logger;
@@ -17,8 +18,6 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-
-import static com.quester.experiment.dagger2experiment.util.FileLoader.readFile;
 
 /**
  * Created by Josip on 25/01/2015!
@@ -33,6 +32,8 @@ public class CheckpointReachedActivity extends InjectionActivity {
     @Inject
     protected GameStateProvider gameStateProvider;
 
+    private QuestStorage storage;
+
     @Override
     protected void inject(ActivityInjectionComponent activityInjectionComponent) {
         activityInjectionComponent.injectActivity(this);
@@ -41,6 +42,8 @@ public class CheckpointReachedActivity extends InjectionActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        storage = new QuestStorage(this);
 
         setContentView(R.layout.activity_checkpoint_reached);
         ButterKnife.inject(this);
@@ -54,7 +57,12 @@ public class CheckpointReachedActivity extends InjectionActivity {
         Checkpoint activeCheckpoint = gameStateProvider.getGameState().getActiveCheckpoint();
         setTitle(activeCheckpoint.getName());
         initiateWebView();
-        webView.loadData(readFile(activeCheckpoint.getViewHtmlFileName(), this), "text/html", HTTP.UTF_8);
+        webView.loadData(
+                storage.getHtmlViewContent(
+                        gameStateProvider.getGameState().getQuest(),
+                        activeCheckpoint),
+                "text/html",
+                HTTP.UTF_8);
     }
 
     @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})

@@ -103,7 +103,7 @@ public class QuestStorageTest {
 
     private void whenExtractQuestScroll(){
         packageList = storage.findQuestPackages();
-        jsonScroll = storage.extractQuestScroll(packageList.get(0));
+        jsonScroll = storage.extractQuestJson(packageList.get(0));
     }
 
     private void whenRemoveQuest(long id, String questName) {
