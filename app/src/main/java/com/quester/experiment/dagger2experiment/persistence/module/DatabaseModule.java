@@ -9,6 +9,7 @@ import com.quester.experiment.dagger2experiment.persistence.quest.QuestRepositor
 import com.quester.experiment.dagger2experiment.persistence.wrapper.sql.Database;
 
 import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.android.ContextHolder;
 
 import javax.inject.Singleton;
 
@@ -27,12 +28,14 @@ public class DatabaseModule {
         SQLiteDatabase sqLiteDatabase = context.openOrCreateDatabase("test", 0, null);
 
         //should enable in production or move somewhere
-        //migrate(sqLiteDatabase);
+        migrate(sqLiteDatabase);
 
         this.database = new Database(sqLiteDatabase);
     }
 
     public void migrate(SQLiteDatabase database){
+
+        ContextHolder.setContext(context);
         Flyway flyway = new Flyway();
         flyway.setDataSource("jdbc:sqlite:" + database.getPath(), "", "");
         flyway.migrate();

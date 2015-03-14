@@ -17,6 +17,7 @@ import com.quester.experiment.dagger2experiment.data.quest.Quest;
 import com.quester.experiment.dagger2experiment.engine.GameEngineService;
 import com.quester.experiment.dagger2experiment.persistence.quest.QuestRepository;
 import com.quester.experiment.dagger2experiment.engine.GameService;
+import com.quester.experiment.dagger2experiment.util.Logger;
 
 import org.parceler.Parcels;
 
@@ -29,12 +30,12 @@ import butterknife.OnClick;
 
 public class MainActivity extends InjectionActivity {
 
+    private static final Logger logger = Logger.instance(MainActivity.class);
+
     private Parcelable wrappedQuest;
 
     @InjectView(R.id.text_view)
     protected TextView infoTextView;
-
-    private static final String TAG = "MainActivity";
 
     @Inject
     protected LocationManager locationManager;
@@ -59,11 +60,10 @@ public class MainActivity extends InjectionActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d(TAG, "injected dependencies");
-        Log.d(TAG, String.valueOf(locationManager != null));
+        logger.debug("injected dependencies");
+        logger.debug(String.valueOf(locationManager != null));
 
         setContentView(R.layout.activity_main);
-
         ButterKnife.inject(this);
 
         Quest mockedQuest = MockedQuestUtils.mockLinearQuest(1, "Mocked linear quest", 3);

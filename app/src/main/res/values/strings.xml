@@ -14,5 +14,7 @@
     <string name="title_activity_storage_test">StorageTestActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_web_view_example">WebViewExampleActivity</string>
+    <string name="title_activity_choose_quest">ChooseQuestActivity</string>
+    <string name="title_activity_start_quest">StartQuestActivity</string>
 
 </resources>

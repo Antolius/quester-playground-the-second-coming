@@ -17,17 +17,6 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
-        <!-- ACTIVITIES -->
-
-        <activity
-            android:name=".ui.MainActivity"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
-            android:name=".ui.CheckpointReachedActivity"
-            android:label="Dagger2Experiment" >
-        </activity>
-
         <!-- SERVICES -->
 
         <service
@@ -42,6 +31,16 @@
             android:label="@string/geofence_intent_service" >
         </service>
 
+        <!-- ACTIVITIES -->
+
+        <activity
+            android:name=".ui.ChooseQuestActivity"
+            android:label="@string/title_activity_choose_quest" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.StorageTestActivity"
             android:label="@string/title_activity_storage_test" >
@@ -49,10 +48,18 @@
         <activity
             android:name=".ui.WebViewExampleActivity"
             android:label="@string/title_activity_web_view_example" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.StartQuestActivity"
+            android:label="@string/title_activity_start_quest" >
+        </activity>
+        <activity
+            android:name=".ui.MainActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name=".ui.CheckpointReachedActivity"
+            android:label="Dagger2Experiment" >
         </activity>
     </application>
 

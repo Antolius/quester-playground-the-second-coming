@@ -4,7 +4,9 @@ import com.quester.experiment.dagger2experiment.archive.ArchiverModule;
 import com.quester.experiment.dagger2experiment.engine.provider.GameStateModule;
 import com.quester.experiment.dagger2experiment.persistence.module.DatabaseModule;
 import com.quester.experiment.dagger2experiment.ui.CheckpointReachedActivity;
+import com.quester.experiment.dagger2experiment.ui.ChooseQuestActivity;
 import com.quester.experiment.dagger2experiment.ui.MainActivity;
+import com.quester.experiment.dagger2experiment.ui.StartQuestActivity;
 import com.quester.experiment.dagger2experiment.ui.StorageTestActivity;
 import com.quester.experiment.dagger2experiment.ui.WebViewExampleActivity;
 
@@ -36,6 +38,10 @@ public interface ActivityInjectionComponent {
     void injectActivity(CheckpointReachedActivity activity);
 
     void injectActivity(WebViewExampleActivity webViewExampleActivity);
+
+    void injectActivity(ChooseQuestActivity chooseQuestActivity);
+
+    void injectActivity(StartQuestActivity startQuestActivity);
 
     /*
     other injectActivity methods go here

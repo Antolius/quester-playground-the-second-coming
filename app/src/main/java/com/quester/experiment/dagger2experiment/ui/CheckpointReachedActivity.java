@@ -9,8 +9,9 @@ import com.quester.experiment.dagger2experiment.InjectionActivity;
 import com.quester.experiment.dagger2experiment.R;
 import com.quester.experiment.dagger2experiment.archive.QuestStorage;
 import com.quester.experiment.dagger2experiment.data.checkpoint.Checkpoint;
+import com.quester.experiment.dagger2experiment.data.game.GameState;
 import com.quester.experiment.dagger2experiment.engine.provider.GameStateProvider;
-import com.quester.experiment.dagger2experiment.util.Logger;
+import com.sromku.simple.storage.SimpleStorage;
 
 import org.apache.http.protocol.HTTP;
 
@@ -21,15 +22,13 @@ import butterknife.InjectView;
 
 public class CheckpointReachedActivity extends InjectionActivity {
 
-    private static final Logger logger = Logger.instance(CheckpointReachedActivity.class);
-
     @InjectView(R.id.webView)
     protected WebView webView;
 
     @Inject
     protected GameStateProvider gameStateProvider;
 
-    private QuestStorage storage;
+    private GameState game;
 
     @Override
     protected void inject(ActivityInjectionComponent activityInjectionComponent) {
@@ -39,33 +38,51 @@ public class CheckpointReachedActivity extends InjectionActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        storage = new QuestStorage(this);
-
-        setContentView(R.layout.activity_checkpoint_reached);
-        ButterKnife.inject(this);
-
-        logger.verbose("injected dependencies");
+        initialize();
 
         renderCurrentCheckpoint();
     }
 
-    private void renderCurrentCheckpoint() {
-        Checkpoint activeCheckpoint = gameStateProvider.getGameState().getActiveCheckpoint();
-        setTitle(activeCheckpoint.getName());
+    private void initialize() {
+        setContentView(R.layout.activity_checkpoint_reached);
+        ButterKnife.inject(this);
+
+        game = gameStateProvider.getGameState();
         initiateWebView();
-        webView.loadData(
-                storage.getHtmlViewContent(
-                        gameStateProvider.getGameState().getQuest(),
-                        activeCheckpoint),
-                "text/html",
-                HTTP.UTF_8);
     }
 
     @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
     private void initiateWebView() {
+
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(new JavaScriptInterfaceWrapper(gameStateProvider.getGameState()), "gameState");
+        webView.getSettings().setAllowFileAccess(true);
+        webView.getSettings().setAllowContentAccess(true);
+        webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
+        webView.getSettings().setAllowFileAccessFromFileURLs(true);
+
+        webView.addJavascriptInterface(new JavaScriptInterfaceWrapper(game), "gameState");
     }
+
+    private void renderCurrentCheckpoint() {
+
+        Checkpoint checkpoint = game.getActiveCheckpoint();
+        setTitle(checkpoint.getName());
+
+        webView.loadDataWithBaseURL(getBaseUrl(), getHtml(checkpoint),
+                "text/html", HTTP.UTF_8, null);
+    }
+
+    private String getBaseUrl() {
+        return "file://" +
+                SimpleStorage.getInternalStorage(this)
+                        .getFile("Quests")
+                        .getAbsolutePath() + "/";
+    }
+
+    private String getHtml(Checkpoint checkpoint) {
+        return new QuestStorage(this)
+                .getHtmlViewContent(game.getQuest(), checkpoint);
+    }
+
 }
