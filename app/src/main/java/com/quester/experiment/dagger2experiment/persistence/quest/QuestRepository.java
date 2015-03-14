@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class QuestRepository implements DatabaseRepository<Quest> {
 
@@ -40,11 +41,10 @@ public class QuestRepository implements DatabaseRepository<Quest> {
         }
 
         long modelId = insertOrUpdate(element.getId(), values, "quests");
-        element.setId(modelId);
 
         saveGraph(element);
 
-        return element;
+        return findOne(modelId);
     }
 
     private long insertOrUpdate(long id, ContentValues values, String tableName) {
@@ -57,21 +57,22 @@ public class QuestRepository implements DatabaseRepository<Quest> {
 
     private void saveGraph(Quest quest) {
 
-        for (Map.Entry<Checkpoint, HashSet<Checkpoint>> entry :
-                quest.getQuestGraph().getQuestGraphMap().entrySet()) {
+        QuestGraph questGraph = quest.getQuestGraph();
+        Map<Checkpoint, Set<Checkpoint>> newMap = new HashMap<>(questGraph.getAllCheckpoints().size());
 
-            long keyItemId = checkpointRepository.save(entry.getKey()).getId();
-            entry.getKey().setId(keyItemId);
+        Checkpoint newCheckpoint;
+        for (Checkpoint oldCheckpoint : questGraph.getAllCheckpoints()) {
+            newCheckpoint = checkpointRepository.save(oldCheckpoint);
+            newMap.put(newCheckpoint, questGraph.getChildren(oldCheckpoint));
+            oldCheckpoint.setId(newCheckpoint.getId());
+        }
 
-            for (Checkpoint entryValue : entry.getValue()) {
-
-                long valueItemId = checkpointRepository.save(entryValue).getId();
-                entryValue.setId(valueItemId);
-
+        for (Checkpoint parent : newMap.keySet()) {
+            for (Checkpoint child : newMap.get(parent)) {
                 ContentValues values = new ContentValues();
                 values.put("quest_id", quest.getId());
-                values.put("parent_id", keyItemId);
-                values.put("child_id", valueItemId);
+                values.put("parent_id", parent.getId());
+                values.put("child_id", child.getId());
                 database.insert("graph", values);
             }
         }
@@ -95,7 +96,7 @@ public class QuestRepository implements DatabaseRepository<Quest> {
 
         List<Quest> quests = new ArrayList<>();
 
-        for(Row row : rows){
+        for (Row row : rows) {
             quests.add(parseQuestFromRow(row));
         }
 

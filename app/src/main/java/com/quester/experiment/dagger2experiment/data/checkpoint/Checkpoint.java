@@ -86,7 +86,7 @@ public class Checkpoint {
         if (this == o) {
             return true;
         }
-        if (o == null) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 

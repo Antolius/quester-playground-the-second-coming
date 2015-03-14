@@ -28,7 +28,7 @@ public class DatabaseModule {
         SQLiteDatabase sqLiteDatabase = context.openOrCreateDatabase("test", 0, null);
 
         //should enable in production or move somewhere
-        migrate(sqLiteDatabase);
+//        migrate(sqLiteDatabase);
 
         this.database = new Database(sqLiteDatabase);
     }

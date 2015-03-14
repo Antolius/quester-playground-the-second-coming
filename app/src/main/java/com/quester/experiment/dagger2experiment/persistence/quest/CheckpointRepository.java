@@ -28,9 +28,9 @@ public class CheckpointRepository implements DatabaseRepository<Checkpoint> {
         values.put("viewHtmlFileName", element.getViewHtmlFileName());
         values.put("eventsScriptFileName", element.getEventsScriptFileName());
 
-        element.setId(insertOrUpdate(element.getId(), values, "checkpoints"));
+        long modelId = insertOrUpdate(element.getId(), values, "checkpoints");
 
-        return element;
+        return findOne(modelId);
     }
 
     @Override
@@ -53,6 +53,7 @@ public class CheckpointRepository implements DatabaseRepository<Checkpoint> {
         Row row = rows.get(0);
         Checkpoint element = new Checkpoint();
 
+        element.setId(row.getLong("id"));
         element.setName(row.getString("name"));
         element.setRoot(row.getBoolean("root"));
         element.setViewHtmlFileName(row.getString("viewHtmlFileName"));

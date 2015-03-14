@@ -29,7 +29,7 @@ public class QuestGraph {
             throw new IllegalArgumentException("Collection of checkpoints must not in itself be or contain null.");
         }
 
-        questGraphMap = new HashMap<Checkpoint, HashSet<Checkpoint>>(checkpoints.size());
+        questGraphMap = new HashMap<>(checkpoints.size());
         for (Checkpoint checkpoint : checkpoints) {
             questGraphMap.put(checkpoint, new HashSet<Checkpoint>());
         }
@@ -104,7 +104,7 @@ public class QuestGraph {
 
     private void assertCheckpointExists(final Checkpoint checkpoint) throws IllegalArgumentException {
         if (!containsCheckpoint(checkpoint)) {
-            throw new IllegalArgumentException("Checkpoint does not exist in quest graph");
+            throw new IllegalArgumentException("Checkpoint " + checkpoint + " does not exist in quest graph " + questGraphMap);
         }
     }
 
